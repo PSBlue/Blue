@@ -11,27 +11,30 @@ Function Connect-ArmSubscription
 				
 		[String]$SubscriptionId
 	)
-	if ($Script:AuthContext -eq $null)
-	{
-		$script:AuthContext = New-Object -TypeName Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext -ArgumentList ($Script:LoginUrl)	
-	}
+
 	
 	Write-Debug "Logging on using Parameter set $($PSCmdlet.ParameterSetName)"
 	
 	if ($PSCmdlet.ParameterSetName -eq "VisibleCredPrompt")
 	{
+        $Params = @{}
 		if ($ForceShowUi -eq $true)
 		{
-			$PromptBehavior = [Microsoft.IdentityModel.Clients.ActiveDirectory.PromptBehavior]::Always	
+			$Params.Add("PromptBehavior","Always")
 		}
-		Else
-		{
-			$PromptBehavior = [Microsoft.IdentityModel.Clients.ActiveDirectory.PromptBehavior]::Auto
-		}
+        Else
+        {
+            $Params.Add("PromptBehavior","Suppress")
+        }
+
+        $Params.Add("LoginUrl",$Script:LoginUrl)
+        $Params.Add("ResourceUrl",$Script:ResourceUrl)
+        $Params.Add("ClientId",$Script:DefaultClientId)
+        $Params.Add("RedirectUri",$Script:DefaultAuthRedirectUri)
 		
 		Try 
 		{
-			$authResult = $script:authContext.AcquireToken($Script:ResourceUrl,$Script:DefaultClientId, $Script:DefaultAuthRedirectUri, $PromptBehavior)	
+			$authResult = Get-InternalAcquireToken @Params -ErrorAction Stop
 		}
 		Catch
 		{
@@ -39,6 +42,27 @@ Function Connect-ArmSubscription
 		}
 		
 	}
+    ElseIf($PSCmdlet.ParameterSetName -eq "ConnectByCredObject")
+    {    
+        $Params = @{}
+        $Params.Add("LoginUrl",$Script:LoginUrl)
+        $Params.Add("ResourceUrl",$Script:ResourceUrl)
+        $Params.Add("ClientId",$Script:DefaultClientId)
+        $Params.Add("Credential",$Credential)
+
+        Try 
+		{
+			$authResult = Get-InternalAcquireToken @Params -ErrorAction Stop
+		}
+		Catch
+		{
+			#Error-handling here
+		}
+    }
+    Else
+    {
+        Write-error "Could not understand how you wanted to log in"
+    }
 	
 	if ($authResult)
 	{
@@ -69,23 +93,13 @@ Function Connect-ArmSubscription
     Foreach ($Tenant in $Tenants)
     {
         
-        $PromptBehavior = [Microsoft.IdentityModel.Clients.ActiveDirectory.PromptBehavior]::Never
-        $TenantAuthContext = New-Object -TypeName Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext -ArgumentList ("https://login.windows.net/$($Tenant.tenantId)/oauth2/authorize")	
+        
+        $params["PromptBehavior"] = "Suppress"
+        $Params["LoginUrl"] = "https://login.windows.net/$($Tenant.tenantId)/oauth2/authorize"
+        $TenantauthResult = Get-InternalAcquireToken @Params
         
 
-        Try
-        {
-            #Try auth with a hidden window first
-            $TenantauthResult = $TenantAuthContext.AcquireToken($Script:ResourceUrl,$Script:DefaultClientId, $Script:DefaultAuthRedirectUri, $PromptBehavior)
-        }
-        Catch
-        {
-            #If that didn't work, flash the ugly window
-            $PromptBehavior = [Microsoft.IdentityModel.Clients.ActiveDirectory.PromptBehavior]::Auto
-            $TenantauthResult = $TenantAuthContext.AcquireToken($Script:ResourceUrl,$Script:DefaultClientId, $Script:DefaultAuthRedirectUri, $PromptBehavior)
-        }
-
-        $SubscriptionResult = $Result = Get-InternalRest -Uri "https://management.azure.com/subscriptions" -BearerToken $TenantauthResult.AccessToken
+        $SubscriptionResult  = Get-InternalRest -Uri "https://management.azure.com/subscriptions" -BearerToken $TenantauthResult.AccessToken
         foreach ($Subscription in $SubscriptionResult.Value)
         {
             $SubObj = "" | Select SubscriptionId,TenantId,AccessToken,RefreshToken, Expiry, SubscriptionObject
@@ -135,7 +149,7 @@ Function Connect-ArmSubscription
         #Multiple returned, make surethe specified is in the list
         if (($TenantAuthMap | select -ExpandProperty SubscriptionId ) -notcontains $SubscriptionId)
         {
-            #none of the returned tenants mached the specified
+            Write-Error ""
         }
     }
 

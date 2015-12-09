@@ -26,7 +26,7 @@ Describe "Connect-ArmSubscription" {
 
     It "Produce the right error message on failure" {
             Connect-ArmSubscription -credential $FailingCred -ErrorAction SilentlyContinue -ErrorVariable myErr
-            $myerr[0].Exception.Message | Should be "Error Authenticating"
+            $myerr[1].Exception.Message | Should be "Error Authenticating"
     }
     
     It "Have a guid-parseable output on success" {
