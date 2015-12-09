@@ -61,5 +61,12 @@ Describe "Connect-ArmSubscription" {
         $Result = ParseGuid -Guid $guid
         $Result | Should be $env:subscriptionid
     }
+    
+Describe "Config File" {
+    $Json = Get-Content "$ModuleFolder\Config\apiversions.json" | convertfrom-Json
+    It "apiversions should be parseable json" {
+         $Json | Should Not BeNullOrEmpty
+    }
+}
 
 }
