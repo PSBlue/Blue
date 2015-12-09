@@ -8,6 +8,22 @@ Import-Module "$ModuleFolder\blue.psd1" -force
 $FailingCred = New-Object System.Management.Automation.PsCredential("nope", ("nope" | convertTo-SecureString -asplainText -Force))
 $SuceedingCred = New-Object System.Management.Automation.PsCredential($env:logonaccountusername, ($env:logonaccountuserpassword | convertTo-SecureString -asplainText -Force))
 
+Function ParseGuid
+{
+    Param ($Guid)
+    Try
+    {
+        $Guid = [System.Guid]::Parse($Guid)
+    }
+    Catch
+    {
+        return $null
+    }
+    
+    return $Guid.Tostring()
+}
+
+
 #Tests tagged with "interactive"" cannot be run by CI
 Describe -Tag "Interactive" "Connect-ArmSubscription" {
     It "Output subscription on success" {
@@ -26,19 +42,24 @@ Describe "Connect-ArmSubscription" {
 
     It "Produce the right error message on failure" {
             Connect-ArmSubscription -credential $FailingCred -ErrorAction SilentlyContinue -ErrorVariable myErr
-            $myerr[0].Exception.Message | Should be "Error Authenticating"
+            $myerr[1].Exception.Message | Should be "Error Authenticating"
     }
     
     It "is able to log on to Azure" {
         Connect-ArmSubscription -credential $SuceedingCred | Should Not BeNullOrEmpty
     }
     
-    It "Have a guid-parseable output on success" {
-        [System.Guid]::Parse((Connect-ArmSubscription -credential $SuceedingCred).SubscriptionId) | Should not throw
+
+    It "Have a guid-parseable output on success when subscriptionId is specified" {
+        $Guid = (Connect-ArmSubscription -credential $SuceedingCred -SubscriptionId $env:subscriptionid).SubscriptionId
+        $Result = ParseGuid -Guid $guid
+        $Result | Should be $env:subscriptionid
     }
 
-    It "Have a guid-parseable output on success" {
-        [System.Guid]::Parse((Connect-ArmSubscription -credential $SuceedingCred -SubscriptionId $env:subscriptionid).SubscriptionId) | Should be $env:subscriptionid
+    It "Have a guid-parseable output on success when subscriptionId is not specified" {
+        $Guid = (Connect-ArmSubscription -credential $SuceedingCred).SubscriptionId
+        $Result = ParseGuid -Guid $guid
+        $Result | Should be $env:subscriptionid
     }
 
 }
