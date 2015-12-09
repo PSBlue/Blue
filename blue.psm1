@@ -9,6 +9,7 @@ Get-ChildItem $psscriptroot\Rest\*.ps1 | Foreach-Object { . $_.FullName }
 [string]$script:AuthToken = $null
 [string]$script:RefreshToken = $null
 [Nullable[System.DateTimeOffset]]$script:TokenExpirationUtc = $null
+$Script:AllSubscriptions = @()
 
 #Pre-Canned variables
 $Script:LoginUrl = "https://login.windows.net/common/oauth2/authorize"

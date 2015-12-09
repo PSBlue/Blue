@@ -130,6 +130,9 @@ Function Connect-ArmSubscription
             $TenantAuthMap += $SubObj
         }
     }
+    
+    #Add all subscriptions to global var
+    $Script:AllSubscriptions = $TenantAuthMap
 	
     #Figure out which subscription to choose
     if ($TenantAuthMap.count -eq 0)
