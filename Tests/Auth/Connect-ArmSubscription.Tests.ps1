@@ -68,13 +68,29 @@ Describe "Connect-ArmSubscription" {
     }
     
 
-    It "Have a guid-parseable output on success when subscriptionId is specified" {
+    It "Has a guid-parseable output on success when subscriptionId is specified" {
         $Guid = (Connect-ArmSubscription -credential $SuceedingCred -SubscriptionId $env:subscriptionid).SubscriptionId
         $Result = ParseGuid -Guid $guid
         $Result | Should be $env:subscriptionid
     }
+    
+    It "Has a guid-parseable output on success when tenantid is specified" {
+        $Guid = (Connect-ArmSubscription -credential $SuceedingCred -TenantId $env:tenantid).SubscriptionId
+        $Result = ParseGuid -Guid $guid
+        $Result | Should be $env:subscriptionid
+    }
+    
+    It "Fails correctly when the user is not connected to the specified tenant" {
+        {Connect-ArmSubscription -credential $SuceedingCred -TenantId "somethingSomething" -ErrorAction SilentlyContinue -ErrorVariable myErr} | Should not throw
+    }
+    
+    It "Has a guid-parseable output on success when both tenantid and subscriptionid is specified" {
+        $Guid = (Connect-ArmSubscription -credential $SuceedingCred -TenantId $env:tenantid -SubscriptionId $env:subscriptionid).SubscriptionId
+        $Result = ParseGuid -Guid $guid
+        $Result | Should be $env:subscriptionid
+    }
 
-    It "Have a guid-parseable output on success when subscriptionId is not specified" {
+    It "Has a guid-parseable output on success when subscriptionId is not specified" {
         $Guid = (Connect-ArmSubscription -credential $SuceedingCred).SubscriptionId
         $Result = ParseGuid -Guid $guid
         $Result | Should be $env:subscriptionid

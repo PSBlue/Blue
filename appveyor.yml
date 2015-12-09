@@ -15,3 +15,5 @@ environment:
     secure: 9fhG/BOeoe18Oeeq/wFaY8OjJEujFumo8eqwzxfOBgUPcP5xXeXBNWgD5y/zkMd/
   subscriptionid:
     secure: GuntNH4gaM2nKUi7xwa1LKe9stjVIOnIm15fR9nMOa093cwbzkBPcWdvLx9fps2n
+  tenantid:
+    secure: myVKH3dwNJph8o3HsfsDIAu4BBxHfZQhpLGmgIageW6pD1WJ4HqAoDQNxWUY++he

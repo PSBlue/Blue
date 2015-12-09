@@ -10,6 +10,8 @@ Function Connect-ArmSubscription
 		[switch]$ForceShowUi,
 				
 		[String]$SubscriptionId,
+        
+        [String]$TenantId,
 
         [Switch]$BasicOutput
 	)
@@ -92,10 +94,23 @@ Function Connect-ArmSubscription
     $TenantAuthMap = @()
     $ThisSubscription = $null
 	$Tenants = $Result.Value
+    
+    if ($TenantId)
+    {
+        $Tenants = $Tenants | where {$_.TenantId -eq $TenantId}
+        if ($Tenants -eq $null)
+        {
+            Write-Error "The logged on user is not connected to tenant $tenantId"
+            Return
+        }
+    }
+    
+    
+    
     Foreach ($Tenant in $Tenants)
     {
         
-        
+        Write-verbose "Listing Subscriptions in tenant $($Tenant.tenantId)"
         $params["PromptBehavior"] = "Suppress"
         $Params["LoginUrl"] = "https://login.windows.net/$($Tenant.tenantId)/oauth2/authorize"
         $TenantauthResult = Get-InternalAcquireToken @Params
@@ -104,6 +119,7 @@ Function Connect-ArmSubscription
         $SubscriptionResult  = Get-InternalRest -Uri "https://management.azure.com/subscriptions" -BearerToken $TenantauthResult.AccessToken
         foreach ($Subscription in $SubscriptionResult.Value)
         {
+            Write-verbose "     Found subscription $($Subscription.subscriptionId)"
             $SubObj = "" | Select SubscriptionId,TenantId,AccessToken,RefreshToken, Expiry, SubscriptionObject
             $subobj.SubscriptionId = $Subscription.subscriptionId
             $subobj.TenantId = $Tenant.tenantId
