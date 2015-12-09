@@ -9,7 +9,9 @@ Function Connect-ArmSubscription
 		[Parameter(Mandatory=$False,ParameterSetName='VisibleCredPrompt')]
 		[switch]$ForceShowUi,
 				
-		[String]$SubscriptionId
+		[String]$SubscriptionId,
+
+        [Switch]$BasicOutput
 	)
 
 	
@@ -88,7 +90,7 @@ Function Connect-ArmSubscription
     
     #Create an array to hold the list of tenants, subscriptions and auth tokens
     $TenantAuthMap = @()
-
+    $ThisSubscription = $null
 	$Tenants = $Result.Value
     Foreach ($Tenant in $Tenants)
     {
@@ -135,13 +137,13 @@ Function Connect-ArmSubscription
                 $script:AuthToken = $TenantAuthMap[0].AccessToken
                 $Script:RefreshToken = $TenantAuthMap[0].RefreshToken
                 $script:TokenExpirationUtc = $TenantAuthMap[0].Expiry
-                Return $TenantAuthMap[0].SubscriptionObject
+                $ThisSubscription =  $TenantAuthMap[0].SubscriptionObject
             }
         }
         Else
         {
             #return the subscription
-            Return $TenantAuthMap[0].SubscriptionObject
+            $ThisSubscription =  $TenantAuthMap[0].SubscriptionObject
         }
     }
     ElseIf ($TenantAuthMap.count -gt 1)
@@ -153,7 +155,18 @@ Function Connect-ArmSubscription
         }
     }
 
-	[string]$script:CurrentSubscriptionId = $SubscriptionId
+    [string]$script:CurrentSubscriptionId = $ThisSubscription.SubscriptionId
+
+    if ($BasicOutput)
+    {
+        return $ThisSubscription.SubscriptionId
+    }
+    Else
+    {
+        return $ThisSubscription
+    }
+
+	
 }
 
 Function Get-InternalAuthDetails

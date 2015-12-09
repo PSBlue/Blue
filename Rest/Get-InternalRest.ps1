@@ -6,7 +6,7 @@ Function Get-InternalRest
 		$ApiVersion
 	)
 	
-	$ApiVersions = Get-Content (Join-Path $Script:ThisModulePath "Config\Apiversions.json") | convertfrom-Json
+	$ApiVersions = Get-Content (Join-Path $Script:ThisModulePath "Config\Apiversions.json") -Raw| convertfrom-Json
 	
 	if ($ApiVersion -eq $null)
 	{

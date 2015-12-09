@@ -36,14 +36,31 @@ Describe -Tag "Interactive" "Connect-ArmSubscription" {
     }
 }
 
+if ($PSVersionTable.PSVersion.Major -eq 4)
+{
+    Describe "Connect-ArmSubscription" {
+        It "Produce the right error message on failure (v4)" {
+            Connect-ArmSubscription -credential $FailingCred -ErrorAction SilentlyContinue -ErrorVariable myErr
+            $myerr[0].Exception.Message | Should be "Error Authenticating"
+        }
+    }
+
+}
+
+if ($PSVersionTable.PSVersion.Major -eq 5)
+{
+    Describe "Connect-ArmSubscription" {
+        It "Produce the right error message on failure (v5)" {
+            Connect-ArmSubscription -credential $FailingCred -ErrorAction SilentlyContinue -ErrorVariable myErr
+            $myerr[1].Exception.Message | Should be "Error Authenticating"
+        }
+    }
+
+}
+
 Describe "Connect-ArmSubscription" {
     It "Not throw on failure" {
         {Connect-ArmSubscription -credential $FailingCred -ErrorAction SilentlyContinue -ErrorVariable myErr} | Should not throw
-    }
-
-    It "Produce the right error message on failure" {
-            Connect-ArmSubscription -credential $FailingCred -ErrorAction SilentlyContinue -ErrorVariable myErr
-            $myerr[1].Exception.Message | Should be "Error Authenticating"
     }
     
     It "is able to log on to Azure" {
