@@ -63,7 +63,7 @@ Describe "Connect-ArmSubscription" {
     }
     
 Describe "Config File" {
-    $Json = Get-Content "$ModuleFolder\Config\apiversions.json" | convertfrom-Json
+    $Json = Get-Content "$ModuleFolder\Config\apiversions.json" -Raw | convertfrom-Json
     It "apiversions should be parseable json" {
          $Json | Should Not BeNullOrEmpty
     }
