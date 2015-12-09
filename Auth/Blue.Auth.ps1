@@ -9,8 +9,7 @@ Function Connect-ArmSubscription
 		[Parameter(Mandatory=$False,ParameterSetName='VisibleCredPrompt')]
 		[switch]$ForceShowUi,
 				
-		[String]$SubscriptionId,
-		[String]$SubscriptionName
+		[String]$SubscriptionId
 	)
 	if ($Script:AuthContext -eq $null)
 	{
@@ -49,23 +48,96 @@ Function Connect-ArmSubscription
 		
 		Write-Verbose -Message "Authenticated as $($AuthResult.UserInfo.DisplayableId)"
 		
-		$Url = "https://management.azure.com/subscriptions&api-version=2015-01-01"
+		$Url = "https://management.azure.com/tenants?api-version=2014-04-01-preview"
 		$headers = @{
-			"x-ms-version"="2015-01-01";
-			"Content-Type"="application/json";
 			"Authorization"="Bearer $($AuthResult.AccessToken)"
 			}
 		$Result = Invoke-RestMethod -Headers $headers -uri $Url -Method Get
-		$Result
 	}
 	Else
 	{
 		Write-error "Error Authenticating"
 	}
 	
+    #Create an array to hold the list of tenants, subscriptions and auth tokens
+    $TenantAuthMap = @()
+
+	$Tenants = $Result.Value
+    Foreach ($Tenant in $Tenants)
+    {
+        
+        $PromptBehavior = [Microsoft.IdentityModel.Clients.ActiveDirectory.PromptBehavior]::Never
+        $TenantAuthContext = New-Object -TypeName Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext -ArgumentList ("https://login.windows.net/$($Tenant.tenantId)/oauth2/authorize")	
+        
+
+        Try
+        {
+            #Try auth with a hidden window first
+            $TenantauthResult = $TenantAuthContext.AcquireToken($Script:ResourceUrl,$Script:DefaultClientId, $Script:DefaultAuthRedirectUri, $PromptBehavior)
+        }
+        Catch
+        {
+            #If that didn't work, flash the ugly window
+            $PromptBehavior = [Microsoft.IdentityModel.Clients.ActiveDirectory.PromptBehavior]::Auto
+            $TenantauthResult = $TenantAuthContext.AcquireToken($Script:ResourceUrl,$Script:DefaultClientId, $Script:DefaultAuthRedirectUri, $PromptBehavior)
+        }
+
+
+        $ListSubscriptionUri = "https://management.azure.com/subscriptions?api-version=2014-04-01-preview"
+        $headers = @{
+			"Authorization"="Bearer $($TenantauthResult.AccessToken)"
+			}
+        $SubscriptionResult = Invoke-RestMethod -Uri $ListSubscriptionUri -Headers $headers
+        foreach ($Subscription in $SubscriptionResult.Value)
+        {
+            $SubObj = "" | Select SubscriptionId,TenantId,AccessToken,RefreshToken, Expiry, SubscriptionObject
+            $subobj.SubscriptionId = $Subscription.subscriptionId
+            $subobj.TenantId = $Tenant.tenantId
+            $subobj.AccessToken = $TenantAuthResult.AccessToken
+            $subobj.RefreshToken = $TenantauthResult.RefreshToken
+            $subobj.Expiry = $TenantauthResult.ExpiresOn
+            $subobj.SubscriptionObject = $Subscription
+            $TenantAuthMap += $SubObj
+        }
+    }
 	
-	
-	
+    #Figure out which subscription to choose
+    if ($TenantAuthMap.count -eq 0)
+    {
+        #Error
+    }
+    ElseIf ($TenantAuthMap.count -eq 1)
+    {
+        #Only one returned, make sure its the right one
+        if ($SubscriptionId)
+        {
+            if ($SubscriptionId -ne $TenantAuthMap[0].SubscriptionId)
+            {
+                #We got authenticated, but not to the requested subscription
+                Write-error "We got authenticated, but not to the requested subscription"
+                Return
+            }
+            Else
+            {
+                #return the subscription
+                Return $TenantAuthMap[0].SubscriptionObject
+            }
+        }
+        Else
+        {
+            #return the subscription
+            Return $TenantAuthMap[0].SubscriptionObject
+        }
+    }
+    ElseIf ($TenantAuthMap.count -gt 1)
+    {
+        #Multiple returned, make surethe specified is in the list
+        if (($TenantAuthMap | select -ExpandProperty SubscriptionId ) -notcontains $SubscriptionId)
+        {
+            #none of the returned tenants mached the specified
+        }
+    }
+
 	[string]$script:CurrentSubscriptionId = $SubscriptionId
 }
 

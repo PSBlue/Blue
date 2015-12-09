@@ -16,8 +16,22 @@ Describe "Connect-ArmSubscription" {
 #        Connect-ArmSubscription -Credential $FailingCred | Should be $null
 #    }
 
-    It "Doesn't output anything on success" {
-        Connect-ArmSubscription | Should be $null
+    It "Output subscription on success" {
+        (Connect-ArmSubscription).SubscriptionId | Should not be $null
     }
+    
+    It "Have a guid-parseable output on success" {
+        {[System.Guid]::Parse((Connect-ArmSubscription).SubscriptionId)} | Should not throw
+    }
+
+    It "Not throw on failure" {
+        {Connect-ArmSubscription -credential $FailingCred -ErrorAction SilentlyContinue -ErrorVariable myErr} | Should not throw
+    }
+
+    It "Produce the right error message on failure" {
+            Connect-ArmSubscription -credential $FailingCred -ErrorAction SilentlyContinue -ErrorVariable myErr
+            $myerr[0].Exception.Message | Should be "Error Authenticating"
+    }
+
 
 }
