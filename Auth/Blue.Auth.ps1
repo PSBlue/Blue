@@ -120,6 +120,9 @@ Function Connect-ArmSubscription
             Else
             {
                 #return the subscription
+                $script:AuthToken = $TenantAuthMap[0].AccessToken
+                $Script:RefreshToken = $TenantAuthMap[0].RefreshToken
+                $script:TokenExpirationUtc = $TenantAuthMap[0].Expiry
                 Return $TenantAuthMap[0].SubscriptionObject
             }
         }

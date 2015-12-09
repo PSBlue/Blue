@@ -1,0 +1,11 @@
+[
+	{
+		"uri": "https://management.azure.com/subscriptions",
+		"api-version": "2014-04-01-preview"
+	}
+	,
+	{
+		"uri": "https://management.azure.com/tenants",
+		"api-version": "2014-04-01-preview"
+	}
+]
