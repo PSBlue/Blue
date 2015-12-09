@@ -81,7 +81,9 @@ Describe "Connect-ArmSubscription" {
     }
     
     It "Fails correctly when the user is not connected to the specified tenant" {
-        {Connect-ArmSubscription -credential $SuceedingCred -TenantId "somethingSomething" -ErrorAction SilentlyContinue -ErrorVariable myErr} | Should not throw
+
+            Connect-ArmSubscription -credential $SuceedingCred -TenantId "somethingSomething" -ErrorAction SilentlyContinue -ErrorVariable myErr
+            $myerr[0].Exception.Message | Should Match "The logged on user is not connected to tenant"
     }
     
     It "Has a guid-parseable output on success when both tenantid and subscriptionid is specified" {
