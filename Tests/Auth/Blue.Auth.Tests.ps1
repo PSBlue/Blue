@@ -7,15 +7,8 @@ Import-Module "$ModuleFolder\blue.psd1" -force
 
 $FailingCred = New-Object System.Management.Automation.PsCredential("nope", ("nope" | convertTo-SecureString -asplainText -Force))
 
-Describe "Connect-ArmSubscription" {
-#    It "Accepts a credential parameter" {
-#        Connect-ArmSubscription -Credential $FailingCred | Should Not Throw
-#   }
-    
-#    It "Doesn't output anything on fail" {
-#        Connect-ArmSubscription -Credential $FailingCred | Should be $null
-#    }
-
+#Tests tagged with "interactive cannot be run by CI"
+Describe -Tag "Interactive" "Connect-ArmSubscription" {
     It "Output subscription on success" {
         (Connect-ArmSubscription).SubscriptionId | Should not be $null
     }
@@ -23,7 +16,9 @@ Describe "Connect-ArmSubscription" {
     It "Have a guid-parseable output on success" {
         {[System.Guid]::Parse((Connect-ArmSubscription).SubscriptionId)} | Should not throw
     }
+}
 
+Describe "Connect-ArmSubscription" {
     It "Not throw on failure" {
         {Connect-ArmSubscription -credential $FailingCred -ErrorAction SilentlyContinue -ErrorVariable myErr} | Should not throw
     }
