@@ -46,7 +46,7 @@ Describe "Connect-ArmSubscription" {
     }
     
     It "is able to log on to Azure" {
-        Connect-ArmSubscription -credential $SuceedingCred | Should Not BeNullOrEmpty
+        (Connect-ArmSubscription -credential $SuceedingCred).SubscriptionId | Should Not BeNullOrEmpty
     }
     
 
