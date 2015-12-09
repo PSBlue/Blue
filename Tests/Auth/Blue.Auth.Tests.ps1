@@ -30,7 +30,7 @@ Describe "Connect-ArmSubscription" {
     }
     
     It "Have a guid-parseable output on success" {
-        {[System.Guid]::Parse((Connect-ArmSubscription -credential $SuceedingCred).SubscriptionId)} | Should not throw
+        [System.Guid]::Parse((Connect-ArmSubscription -credential $SuceedingCred).SubscriptionId) | Should not throw
     }
 
     It "Have a guid-parseable output on success" {
