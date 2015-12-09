@@ -4,6 +4,7 @@ $here = $ModuleFolderHere
 $ModuleFolder = Split-Path $moduleFolderHere -Parent
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
 Import-Module "$ModuleFolder\blue.psd1" -force
+Import-Module "$ModuleFolder\blue.psm1" -force
 
 $FailingCred = New-Object System.Management.Automation.PsCredential("nope", ("nope" | convertTo-SecureString -asplainText -Force))
 $SuceedingCred = New-Object System.Management.Automation.PsCredential($env:logonaccountusername, ($env:logonaccountuserpassword | convertTo-SecureString -asplainText -Force))
