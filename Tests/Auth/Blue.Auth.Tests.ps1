@@ -7,7 +7,7 @@ Import-Module "$ModuleFolder\blue.psd1" -force
 
 $FailingCred = New-Object System.Management.Automation.PsCredential("nope", ("nope" | convertTo-SecureString -asplainText -Force))
 
-#Tests tagged with "interactive cannot be run by CI"
+#Tests tagged with "interactive"" cannot be run by CI
 Describe -Tag "Interactive" "Connect-ArmSubscription" {
     It "Output subscription on success" {
         (Connect-ArmSubscription).SubscriptionId | Should not be $null
