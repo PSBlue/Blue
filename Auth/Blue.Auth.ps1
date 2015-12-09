@@ -48,17 +48,20 @@ Function Connect-ArmSubscription
 		
 		Write-Verbose -Message "Authenticated as $($AuthResult.UserInfo.DisplayableId)"
 		
-		$Url = "https://management.azure.com/tenants?api-version=2014-04-01-preview"
-		$headers = @{
-			"Authorization"="Bearer $($AuthResult.AccessToken)"
-			}
-		$Result = Invoke-RestMethod -Headers $headers -uri $Url -Method Get
+		$Result = Get-InternalRest -Uri "https://management.azure.com/tenants" -BearerToken $AuthResult.AccessToken
 	}
 	Else
 	{
 		Write-error "Error Authenticating"
+        Return
 	}
 	
+    if (!$result)
+    {
+        Write-error "Error Authenticating"
+        Return
+    }
+    
     #Create an array to hold the list of tenants, subscriptions and auth tokens
     $TenantAuthMap = @()
 
@@ -82,12 +85,7 @@ Function Connect-ArmSubscription
             $TenantauthResult = $TenantAuthContext.AcquireToken($Script:ResourceUrl,$Script:DefaultClientId, $Script:DefaultAuthRedirectUri, $PromptBehavior)
         }
 
-
-        $ListSubscriptionUri = "https://management.azure.com/subscriptions?api-version=2014-04-01-preview"
-        $headers = @{
-			"Authorization"="Bearer $($TenantauthResult.AccessToken)"
-			}
-        $SubscriptionResult = Invoke-RestMethod -Uri $ListSubscriptionUri -Headers $headers
+        $SubscriptionResult = $Result = Get-InternalRest -Uri "https://management.azure.com/subscriptions" -BearerToken $TenantauthResult.AccessToken
         foreach ($Subscription in $SubscriptionResult.Value)
         {
             $SubObj = "" | Select SubscriptionId,TenantId,AccessToken,RefreshToken, Expiry, SubscriptionObject

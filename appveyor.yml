@@ -7,3 +7,11 @@ test_script:
   - ps: $res = Invoke-Pester -ExcludeTag "Interactive" -Path . -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru
   - ps: (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestsResults.xml))
   - ps: if ($res.FailedCount -gt 0) { throw "$($res.FailedCount) tests failed."}
+  
+environment:
+  logonaccountuserpassword:
+    secure: QnkftW2udgTU8p9Z7iC97tILlIR82Fntgg7d0uAKnA4=
+  logonaccountusername:
+    secure: 9fhG/BOeoe18Oeeq/wFaY8OjJEujFumo8eqwzxfOBgUPcP5xXeXBNWgD5y/zkMd/
+  subscriptionid:
+    secure: GuntNH4gaM2nKUi7xwa1LKe9stjVIOnIm15fR9nMOa093cwbzkBPcWdvLx9fps2n
