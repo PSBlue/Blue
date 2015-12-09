@@ -29,6 +29,10 @@ Describe "Connect-ArmSubscription" {
             $myerr[0].Exception.Message | Should be "Error Authenticating"
     }
     
+    It "is able to log on to Azure" {
+        Connect-ArmSubscription -credential $SuceedingCred | Should Not BeNullOrEmpty
+    }
+    
     It "Have a guid-parseable output on success" {
         [System.Guid]::Parse((Connect-ArmSubscription -credential $SuceedingCred).SubscriptionId) | Should not throw
     }
