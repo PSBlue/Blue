@@ -28,7 +28,7 @@ Function Connect-ArmSubscription
 		}
         Else
         {
-            $Params.Add("PromptBehavior","Suppress")
+            $Params.Add("PromptBehavior","Auto")
         }
 
         $Params.Add("LoginUrl",$Script:LoginUrl)
@@ -111,7 +111,7 @@ Function Connect-ArmSubscription
     {
         
         Write-verbose "Listing Subscriptions in tenant $($Tenant.tenantId)"
-        $params["PromptBehavior"] = "Suppress"
+        $params["PromptBehavior"] = "Auto"
         $Params["LoginUrl"] = "https://login.windows.net/$($Tenant.tenantId)/oauth2/authorize"
         $TenantauthResult = Get-InternalAcquireToken @Params
         

@@ -23,9 +23,7 @@ Function Get-InternalAcquireToken
     )
     
 
-    
-
-	$AuthContext = New-Object -TypeName Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext -ArgumentList ($LoginUrl)	
+    $AuthContext = New-Object -TypeName Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext -ArgumentList ($LoginUrl)
 
     if ($PSCmdlet.ParameterSetName -eq "ConnectByCredObject")
     {
@@ -34,7 +32,7 @@ Function Get-InternalAcquireToken
         Try
         {
             $UserCredential = New-Object -TypeName Microsoft.IdentityModel.Clients.ActiveDirectory.UserCredential -ArgumentList ($Credential.UserName, $Credential.Password)
-            $authResult = $authContext.AcquireToken($ResourceUrl,$ClientId, $UserCredential)
+            $authResult = $AuthContext.AcquireToken($ResourceUrl,$ClientId, $UserCredential)
         }
         Catch
         {
@@ -57,15 +55,20 @@ Function Get-InternalAcquireToken
         }
         Try
         {
-            $authResult = $authContext.AcquireToken($ResourceUrl,$ClientId, $RedirectUri, $ThisPromptBehavior)
+            $authResult = $AuthContext.AcquireToken($ResourceUrl,$ClientId, $RedirectUri, $ThisPromptBehavior)
         }
         Catch
         {
-            if ($PromptBehavior -eq "Suppress")
+            if ($_.Exception.Message -match "User canceled authentication")
+            {
+                Write-error "User Canceled authentication"
+                return
+            }
+            if (($PromptBehavior -eq "Suppress") -or ($PromptBehavior -eq "Auto"))
             {
                 #If that failed, and suppress is on, switch to auto
                 $ThisPromptBehavior = [Microsoft.IdentityModel.Clients.ActiveDirectory.PromptBehavior]::Always
-                $authResult = $authContext.AcquireToken($ResourceUrl,$ClientId, $RedirectUri, $ThisPromptBehavior)
+                $authResult = $AuthContext.AcquireToken($ResourceUrl,$ClientId, $RedirectUri, $ThisPromptBehavior)
             }
         }
         
