@@ -115,7 +115,7 @@ Function Connect-ArmSubscription
         $Params["LoginUrl"] = "https://login.windows.net/$($Tenant.tenantId)/oauth2/authorize"
         $TenantauthResult = Get-InternalAcquireToken @Params
         
-
+        Write-Debug "Using access key $($TenantauthResult.AccessToken)"
         $SubscriptionResult  = Get-InternalRest -Uri "https://management.azure.com/subscriptions" -BearerToken $TenantauthResult.AccessToken
         foreach ($Subscription in $SubscriptionResult.Value)
         {
@@ -162,7 +162,7 @@ Function Connect-ArmSubscription
         Else
         {
             #return the subscription
-            $ThisSubscription =  $TenantAuthMap[0].SubscriptionObject
+            $ThisSubscription =  $TenantAuthMap[0]
         }
     }
     ElseIf ($TenantAuthMap.count -gt 1)
@@ -174,7 +174,10 @@ Function Connect-ArmSubscription
         }
     }
 
-    [string]$script:CurrentSubscriptionId = $ThisSubscription.SubscriptionId
+    $script:CurrentSubscriptionId = $ThisSubscription.SubscriptionId
+    $script:AuthToken = $ThisSubscription.AccessToken
+    $script:RefreshToken = $ThisSubscription.AccessToken
+    $script:TokenExpirationUtc = $ThisSubscription.Expiry
 
     if ($BasicOutput)
     {
@@ -182,7 +185,7 @@ Function Connect-ArmSubscription
     }
     Else
     {
-        return $ThisSubscription
+        return $ThisSubscription.SubscriptionObject
     }
 
 	

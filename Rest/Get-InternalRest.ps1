@@ -3,7 +3,8 @@ Function Get-InternalRest
 	Param (
 		$Uri,
 		$BearerToken,
-		$ApiVersion
+		$ApiVersion,
+        $QueryStrings
 	)
 	
 	$ApiVersions = Get-Content (Join-Path $Script:ThisModulePath "Config\Apiversions.json") -Raw| convertfrom-Json
@@ -37,22 +38,46 @@ Function Get-InternalRest
             "Content-Type"="application/json"
         }
 
-    $ApiVersionQuery = "api-version=$apiversion"
-		
-    [System.UriBuilder]$ThisUriBuilder = $uri
+    #$ApiVersionQuery = "api-version=$apiversion"
 
-    if (($ThisUriBuilder.Query -ne $null) -and ($ThisUriBuilder.Query.Length -gt 0))
+    #Build a hashtable for all querystrings
+    if ($QueryStrings)
     {
-        $ThisUriBuilder.Query = $ThisUriBuilder.Query.Substring(1) + "&" + $ApiVersionQuery
+        $QueryStrings.Add("api-version",$apiversion)
     }
     Else
     {
-         $ThisUriBuilder.Query = $ApiVersionQuery
+        $QueryStrings = @{
+            "api-version"=$apiversion
+        }
     }
+    
+    Foreach ($Key in $QueryStrings.Keys)
+    {
+        $ThisValue = $QueryStrings.$key
+
+        $ThisKeyString = "$Key=$ThisValue"
+
+        [System.UriBuilder]$ThisUriBuilder = $uri
+        
+        if (($ThisUriBuilder.Query -ne $null) -and ($ThisUriBuilder.Query.Length -gt 0))
+        {
+            $ThisUriBuilder.Query = $ThisUriBuilder.Query.Substring(1) + "&" + $ThisKeyString
+        }
+        Else
+        {
+             $ThisUriBuilder.Query = $ThisKeyString
+        }
+
+        $Uri = $ThisUriBuilder.ToString()
 	
+    }
+
+    
+
     Try
     {
-        $Result = Invoke-RestMethod -Method Get -Uri $ThisUriBuilder.Uri -Headers $headers
+        $Result = Invoke-RestMethod -Method Get -Uri $Uri -Headers $headers
     }
     Catch
     {}
