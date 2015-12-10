@@ -2,7 +2,8 @@ Function Get-ArmResourceGroup
 {
     [CmdletBinding()]
 	Param (
-		[String]$Name
+		[String]$TagName,
+        [String]$TagValue
 	)
     
     if (!(Test-InternalArmConnection))
