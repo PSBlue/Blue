@@ -2,6 +2,7 @@ Function Get-ArmResourceGroup
 {
     [CmdletBinding()]
 	Param (
+        [String]$Name,
 		[String]$TagName,
         [String]$TagValue
 	)
@@ -16,18 +17,15 @@ Function Get-ArmResourceGroup
 
     if ($Name)
     {
-        $Querys = @{
-        "Filter"=$Name
-        }	
-
-        $ResourceGroups = Get-InternalRest -Uri $Uri -QueryStrings $Querys
+        $Uri = "$uri/$Name"
+        $ResourceGroups = Get-InternalRest -Uri $Uri -ReturnType "Blue.ResourceGroup" -ReturnTypeSingular $true
     }
     Else
     {
-        $ResourceGroups = Get-InternalRest -Uri $Uri
+        $ResourceGroups = Get-InternalRest -Uri $Uri -ReturnType "Blue.ResourceGroup" -ReturnTypeSingular $false
     }
 
-    $ResourceGroups.Value
+    $ResourceGroups
     
 
 

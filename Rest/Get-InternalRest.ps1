@@ -1,10 +1,19 @@
 Function Get-InternalRest
 {
+    [CmdletBinding(DefaultParameterSetName='ReturnObject')]
 	Param (
-		$Uri,
-		$BearerToken,
-		$ApiVersion,
-        $QueryStrings
+		[Parameter(Mandatory=$true)]
+        $Uri,
+		[Parameter(Mandatory=$false)]
+        $BearerToken,
+		[Parameter(Mandatory=$false)]
+        $ApiVersion,
+        [Parameter(Mandatory=$false)]
+        $QueryStrings,
+        [Parameter(Mandatory=$true,ParameterSetName='ReturnStronglyTypedObject')]
+        $ReturnType,
+        [Parameter(Mandatory=$false,ParameterSetName='ReturnStronglyTypedObject')]
+        $ReturnTypeSingular=$true
 	)
 	
 	$ApiVersions = Get-Content (Join-Path $Script:ThisModulePath "Config\Apiversions.json") -Raw| convertfrom-Json
@@ -74,21 +83,77 @@ Function Get-InternalRest
     }
 
     
-
-    Try
+    if ($PSCmdlet.ParameterSetName -eq "ReturnObject")
     {
-        $Result = Invoke-RestMethod -Method Get -Uri $Uri -Headers $headers
+        Try
+        {
+            $Result = Invoke-RestMethod -Method Get -Uri $Uri -Headers $headers
+        }
+        Catch
+        {}
+    
+        if ($result)
+        {
+            return $Result
+        }
+        Else
+        {
+    
+        }
+            
     }
-    Catch
-    {}
-
-    if ($result)
+    Elseif ($PSCmdlet.ParameterSetName -eq "ReturnStronglyTypedObject")
     {
-        return $Result
+        #Load the requested object
+        $TypeLoaded = $true
+        try
+        {
+            $TypeText = get-type -Type $ReturnType
+        }
+        catch
+        {
+            $TypeLoaded = $false
+        }
+        
+        if ($TypeLoaded -eq $false)
+        {
+            #Load the requested type
+            $TypePath = Join-path $Script:thismodulepath "Classes\$ReturnType.cs"
+            if (test-path $TypePath)
+            {
+                Add-type -TypeDefinition (get-content $TypePath -Raw) -Language CSharp
+            }
+            Else
+            {
+                Write-error "Could not load $ReturnType - didn't find that file"
+                return
+            }
+        }
+        
+        #Type Loaded. Use webrequest to query, since we'll do our own json parsing
+        $WebResult = Invoke-WebRequest -Method Get -Uri $Uri -Headers $headers
+        $jobj = [Newtonsoft.Json.Linq.JObject]::Parse($WebResult.Content)
+        
+        if ($ReturnTypeSingular)
+        {
+            $ThisObject = $jobj.ToObject($ReturnType)
+            return $ThisObject
+        }
+        Else
+        {
+            $ReturnArray = @()
+            foreach ($obj in $jobj["value"])
+            {
+                $thisobject = $obj.ToObject($ReturnType)
+                $ReturnArray += $ThisObject
+                $ThisObject = $null
+            }
+            
+            return $ReturnArray
+        }
+        
+        
+        
     }
-    Else
-    {
-
-    }
-	
+    
 }

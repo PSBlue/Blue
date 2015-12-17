@@ -43,7 +43,10 @@ Description = 'An community-driven alternative to the official Powershell module
 # RequiredModules = @()
 
 # Assemblies that must be loaded prior to importing this module
- RequiredAssemblies = @('bin\Microsoft.IdentityModel.Clients.ActiveDirectory.dll')
+ RequiredAssemblies = @(
+    'bin\Microsoft.IdentityModel.Clients.ActiveDirectory.dll'
+    'bin\Newtonsoft.Json.dll'
+    )
 
 # Script files (.ps1) that are run in the caller's environment prior to importing this module.
 # ScriptsToProcess = @()
