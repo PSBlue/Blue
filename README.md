@@ -4,7 +4,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/7346c8vmr9s6k8ql?svg=true)](https://ci.appveyor.com/project/trondhindenes/blue)
 
 ### Features working
-* Basic authentication
+* Simple authentication support (MS account and OrgId)
 
 ### Features in progress
 * Interacting with Resource Group
