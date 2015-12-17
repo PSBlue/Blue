@@ -12,8 +12,8 @@ Function Get-InternalRest
         $QueryStrings,
         [Parameter(Mandatory=$true,ParameterSetName='ReturnStronglyTypedObject')]
         $ReturnType,
-        [Parameter(Mandatory=$false,ParameterSetName='ReturnStronglyTypedObject')]
-        $ReturnTypeSingular=$true
+        [Parameter(Mandatory=$true,ParameterSetName='ReturnStronglyTypedObject')]
+        $ReturnTypeSingular
 	)
 	
 	$ApiVersions = Get-Content (Join-Path $Script:ThisModulePath "Config\Apiversions.json") -Raw| convertfrom-Json

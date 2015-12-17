@@ -9,6 +9,9 @@ Function Get-ArmResourceGroup
         [String]$Name,
         
         [Parameter(Mandatory=$false,ParameterSetName='ByName')]
+        [String]$Location,
+        
+        [Parameter(Mandatory=$false,ParameterSetName='ByName')]
 		[String]$TagName,
         
         [Parameter(Mandatory=$false,ParameterSetName='ByName')]
@@ -52,6 +55,11 @@ Function Get-ArmResourceGroup
     }
     End
     {
+        if ($Location)
+        {
+            $ResourceGroups = $ResourceGroups | where {$_.Location -eq $Location}
+        }
+        
         if ($ResourceGroups.Count -eq 0)
         {
             if ($Name)

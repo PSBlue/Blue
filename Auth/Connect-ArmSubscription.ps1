@@ -157,6 +157,7 @@ Function Connect-ArmSubscription
                 $Script:RefreshToken = $TenantAuthMap[0].RefreshToken
                 $script:TokenExpirationUtc = $TenantAuthMap[0].Expiry
                 $ThisSubscription =  $TenantAuthMap[0]
+               
             }
         }
         Else
@@ -178,6 +179,11 @@ Function Connect-ArmSubscription
     $script:AuthToken = $ThisSubscription.AccessToken
     $script:RefreshToken = $ThisSubscription.AccessToken
     $script:TokenExpirationUtc = $ThisSubscription.Expiry
+    
+     #Grab the available locations for the subscriptions
+    $LocationsResult = Get-InternalRest -Uri "https://management.azure.com/subscriptions/$script:CurrentSubscriptionId/locations" -ReturnType "Blue.AzureServiceLocation" -ReturnTypeSingular $false
+    $Script:AzureServiceLocations += $LocationResult
+
 
     if ($BasicOutput)
     {
