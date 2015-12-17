@@ -13,7 +13,9 @@ Function Get-InternalRest
         [Parameter(Mandatory=$true,ParameterSetName='ReturnStronglyTypedObject')]
         $ReturnType,
         [Parameter(Mandatory=$true,ParameterSetName='ReturnStronglyTypedObject')]
-        $ReturnTypeSingular
+        $ReturnTypeSingular,
+        [ValidateSet("Get", "Delete")]
+        [String]$Method="Get"
 	)
 	
 	$ApiVersions = Get-Content (Join-Path $Script:ThisModulePath "Config\Apiversions.json") -Raw| convertfrom-Json
@@ -87,7 +89,7 @@ Function Get-InternalRest
     {
         Try
         {
-            $Result = Invoke-RestMethod -Method Get -Uri $Uri -Headers $headers
+            $Result = Invoke-RestMethod -Method $Method -Uri $Uri -Headers $headers
         }
         Catch
         {}
@@ -109,7 +111,7 @@ Function Get-InternalRest
         #Type Loaded. Use webrequest to query, since we'll do our own json parsing
         Try
         {
-            $WebResult = Invoke-WebRequest -Method Get -Uri $Uri -Headers $headers    
+            $WebResult = Invoke-WebRequest -Method $Method -Uri $Uri -Headers $headers    
         }
         Catch
         {
