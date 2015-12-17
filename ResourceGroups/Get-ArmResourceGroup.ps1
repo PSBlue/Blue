@@ -3,7 +3,7 @@ Function Get-ArmResourceGroup
     [CmdletBinding()]
 	Param (
         [Parameter(Mandatory=$true,ParameterSetName='ByObj',ValueFromPipeline=$true)]
-        [Blue.ResourceGroup]$InputObject,
+        [Psobject]$InputObject,
         
         [Parameter(Mandatory=$false,ParameterSetName='ByName')]
         [String]$Name,

@@ -104,31 +104,7 @@ Function Get-InternalRest
     }
     Elseif ($PSCmdlet.ParameterSetName -eq "ReturnStronglyTypedObject")
     {
-        #Load the requested object
-        $TypeLoaded = $true
-        try
-        {
-            $TypeText = get-type -Type $ReturnType
-        }
-        catch
-        {
-            $TypeLoaded = $false
-        }
-        
-        if ($TypeLoaded -eq $false)
-        {
-            #Load the requested type
-            $TypePath = Join-path $Script:thismodulepath "Classes\$ReturnType.cs"
-            if (test-path $TypePath)
-            {
-                Add-type -TypeDefinition (get-content $TypePath -Raw) -Language CSharp
-            }
-            Else
-            {
-                Write-error "Could not load $ReturnType - didn't find that file"
-                return
-            }
-        }
+        Load-InternalType -TypeName $ReturnType
         
         #Type Loaded. Use webrequest to query, since we'll do our own json parsing
         Try

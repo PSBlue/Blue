@@ -21,3 +21,13 @@ $Script:AzureServiceLocations = @()
 
 #Other Defaults
 $Script:PsDefaultParameterValues.Add("Invoke-RestMethod:Verbose",$False)
+
+#Load base classes
+<#
+$Files = Get-ChildItem (Join-path $Script:thismodulepath "Classes\Base")
+foreach ($file in $files)
+{
+    Write-verbose "Loading type $($File.BaseName)"
+    Add-type -TypeDefinition (get-content ($file.Fullname) -Raw) -Language CSharp
+}
+#>

@@ -1,12 +1,15 @@
+using System.Collections;
+using System.Collections.Generic;
+
 namespace Blue
 {
     public class ResourceGroup
     {
-        public string id { get; set; }
-        public string name { get; set; }
-        public string location { get; set;}
+        public string Name { get; set; }
+        public string Location { get; set;}
+        public Dictionary<string, string> Tags {get;set;}
+        public string Id { get; set; }
     }
-        
 }
 
 
