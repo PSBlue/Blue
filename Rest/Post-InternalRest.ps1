@@ -119,7 +119,7 @@ Function Post-InternalRest
     }
 	Elseif ($PSCmdlet.ParameterSetName -eq "ReturnStronglyTypedObject")
     {
-        Load-InternalType -TypeName $ReturnType
+        Add-InternalType -TypeName $ReturnType
         
         #Type Loaded. Use webrequest to query, since we'll do our own json parsing
         Try

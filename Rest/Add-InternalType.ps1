@@ -1,4 +1,4 @@
-Function Load-InternalType
+Function Add-InternalType
 {
     Param (
         [String]$TypeName,
@@ -51,7 +51,7 @@ Function Load-InternalType
             {
                 $FileRef = $FileLineContent.Replace('//BLUEREF:',"")
                 $FileObj = Get-ChildItem "$Script:thismodulepath\Classes" -Recurse | where {$_.BaseName -eq $FileRef}
-                $FileRefs += Load-InternalType -TypeName ($Fileobj.FullName) -IsRecursed
+                $FileRefs += Add-InternalType -TypeName ($Fileobj.FullName) -IsRecursed
 
             }
             else
