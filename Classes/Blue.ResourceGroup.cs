@@ -8,6 +8,7 @@ namespace Blue
         public string Name { get; set; }
         public string Location { get; set;}
         public Dictionary<string, string> Tags {get;set;}
+        public Dictionary<string, string> Properties {get;set;}
         public string Id { get; set; }
     }
 }
