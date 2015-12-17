@@ -131,7 +131,16 @@ Function Get-InternalRest
         }
         
         #Type Loaded. Use webrequest to query, since we'll do our own json parsing
-        $WebResult = Invoke-WebRequest -Method Get -Uri $Uri -Headers $headers
+        Try
+        {
+            $WebResult = Invoke-WebRequest -Method Get -Uri $Uri -Headers $headers    
+        }
+        Catch
+        {
+            #TODO: Better error handling
+            return
+        }
+        
         $jobj = [Newtonsoft.Json.Linq.JObject]::Parse($WebResult.Content)
         
         if ($ReturnTypeSingular)

@@ -4,9 +4,14 @@
 #>
 Function Get-ArmSubscription
 {
+    [CmdletBinding(DefaultParameterSetName='AllSUbs')]
 	Param (
         # List only the currently connected subscription
-		[Switch]$Current
+        [Parameter(Mandatory=$true,ParameterSetName='CurrentSub')]
+		[Switch]$Current,
+        
+        [Parameter(ParameterSetName='CurrentSub')]
+        [Switch]$IncludeAccessKey
 	)
 	
     if ($Script:AllSubscriptions.count -eq 0)
@@ -27,14 +32,27 @@ Function Get-ArmSubscription
         if ($script:CurrentSubscriptionId -ne $null)
         {
             #Display the current subscription
-            $AllSubs | Select SubscriptionId,TenantId,SubscriptionObject | where {$_.SubscriptionId -eq $script:CurrentSubscriptionId}
+            $thisSub = $AllSubs | where {$_.SubscriptionId -eq $script:CurrentSubscriptionId}
+            
         }
         Else
         {
             Write-warning "Not currently connected to a subscription"
+            return
+        }
+        
+        if ($IncludeAccessKey -eq $true)
+        {
+            Return $ThisSub | Select SubscriptionId, TenantId, SubscriptionObject, AccessToken
+        }
+        Else
+        {
+            Return $ThisSub | Select SubscriptionId, TenantId, SubscriptionObject
         }
         
     }
+    
+    
     
 
 
