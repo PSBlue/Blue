@@ -9,7 +9,7 @@
 		"api-version": "2015-01-01"
 	}
 	,
-		{
+	{
 		"uri": "https://management.azure.com/subscriptions/*/resourcegroups",
 		"api-version": "2015-01-01"
 	}
