@@ -4,6 +4,7 @@ $Script:thismodulepath = $psscriptroot
 Get-ChildItem $psscriptroot\Auth\*.ps1 | Foreach-Object { . $_.FullName }
 Get-ChildItem $psscriptroot\Rest\*.ps1 | Foreach-Object { . $_.FullName }
 Get-ChildItem $psscriptroot\ResourceGroup\*.ps1 | Foreach-Object { . $_.FullName }
+Get-ChildItem $psscriptroot\Resource\*.ps1 | Foreach-Object { . $_.FullName }
 
 #Setup internal variables
 [string]$script:CurrentSubscriptionId = $null
