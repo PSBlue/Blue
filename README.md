@@ -3,6 +3,8 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/7346c8vmr9s6k8ql?svg=true)](https://ci.appveyor.com/project/trondhindenes/blue)
 
+* [License](LICENSE.md)
+
 ### Design goals for the module:
 * Better abstraction from Azure's APIs (i.e. more PowerShell-y)
 * Make it easy to extend by providing internal functions to abstract away stuff like Rest calls etc
