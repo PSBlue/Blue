@@ -16,7 +16,7 @@ For internal(helper) functions, use <Verb>-Internal<Name>
 
 ### Stuff to remember
 * Focus on pipeline-ability
-* Focus on use case, not the api structure. For example, `Get-ArmResource -name "MyRg" | Get-ArmVm` should be a perfectly
+* Focus on use case, not the api structure. For example, `Get-ArmResourceGroup -name "MyRg" | Get-ArmVm` should be a perfectly
 acceptable way of listing VMs in a resource group
 * Fail correctly: A function should generally not cause terminating errors, 
 and a function should fail and return instead of failing and continuing. In general, make the function behave nicely.
