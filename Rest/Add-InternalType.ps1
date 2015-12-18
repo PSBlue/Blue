@@ -23,13 +23,14 @@ Function Add-InternalType
         {
             $FilePath = $TypeName
         }
-        Elseif (test-path (join-path $Script:thismodulepath "classes\$TypeName.cs"))
+        Else
         {
-            $FilePath = join-path $Script:thismodulepath "classes\$TypeName.cs"
+            $FilePath = (Get-ChildItem -path "$script:thismodulepath\Classes" -Recurse -File -Filter "$TypeName.cs").FullName
         }
-        Elseif (test-path (join-path $Script:thismodulepath "classes\Base\$TypeName.cs"))
+        
+        if ($FilePath)
         {
-            $FilePath = join-path $Script:thismodulepath "classes\Base\$TypeName.cs"
+            #We have ze file
         }
         Else
         {

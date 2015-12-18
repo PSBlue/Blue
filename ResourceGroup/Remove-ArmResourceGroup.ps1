@@ -3,7 +3,7 @@ Function Remove-ArmResourceGroup
     [CmdletBinding()]
 	Param (
         [Parameter(Mandatory=$true,ParameterSetName='ByObj',ValueFromPipeline=$true)]
-        [Psobject]$InputObject,
+        [Blue.ResourceGroup]$InputObject,
         
         [Parameter(Mandatory=$true,ParameterSetName='ByName')]
         [String]$Name
