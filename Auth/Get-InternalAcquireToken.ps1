@@ -51,6 +51,13 @@ Function Get-InternalAcquireToken
         }
         Else
         {
+            #Check the credential cache to see if we already have an entry we can use
+            $CacheHit = $AuthContext.TokenCache.ReadItems() | where {$_.Authority -eq $LoginUrl}
+            if ($CacheHit)
+            {
+                Write-verbose "     Attempting to authenticate using TokenCache"
+                $ThisPromptBehavior = [Microsoft.IdentityModel.Clients.ActiveDirectory.PromptBehavior]::Never        
+            }
             $ThisPromptBehavior = [Microsoft.IdentityModel.Clients.ActiveDirectory.PromptBehavior]::Auto
         }
         Try

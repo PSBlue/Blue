@@ -106,29 +106,39 @@ Function Connect-ArmSubscription
     }
     
     
+
     
     Foreach ($Tenant in $Tenants)
     {
         
         Write-verbose "Listing Subscriptions in tenant $($Tenant.tenantId)"
         $params["PromptBehavior"] = "Auto"
-        $Params["LoginUrl"] = "https://login.windows.net/$($Tenant.tenantId)/oauth2/authorize"
+        $Params["LoginUrl"] = "https://login.windows.net/$($Tenant.tenantId)/oauth2/authorize/"
         $TenantauthResult = Get-InternalAcquireToken @Params
         
         Write-Debug "Using access key $($TenantauthResult.AccessToken)"
         $SubscriptionResult  = Get-InternalRest -Uri "https://management.azure.com/subscriptions" -BearerToken $TenantauthResult.AccessToken
-        foreach ($Subscription in $SubscriptionResult.Value)
+        
+        if ($SubscriptionResult.Value.count -gt 0)
         {
-            Write-verbose "     Found subscription $($Subscription.subscriptionId)"
-            $SubObj = "" | Select SubscriptionId,TenantId,AccessToken,RefreshToken, Expiry, SubscriptionObject
-            $subobj.SubscriptionId = $Subscription.subscriptionId
-            $subobj.TenantId = $Tenant.tenantId
-            $subobj.AccessToken = $TenantAuthResult.AccessToken
-            $subobj.RefreshToken = $TenantauthResult.RefreshToken
-            $subobj.Expiry = $TenantauthResult.ExpiresOn
-            $subobj.SubscriptionObject = $Subscription
-            $TenantAuthMap += $SubObj
+            foreach ($Subscription in $SubscriptionResult.Value)
+            {
+                Write-verbose "     Found subscription $($Subscription.subscriptionId)"
+                $SubObj = "" | Select SubscriptionId,TenantId,AccessToken,RefreshToken, Expiry, SubscriptionObject
+                $subobj.SubscriptionId = $Subscription.subscriptionId
+                $subobj.TenantId = $Tenant.tenantId
+                $subobj.AccessToken = $TenantAuthResult.AccessToken
+                $subobj.RefreshToken = $TenantauthResult.RefreshToken
+                $subobj.Expiry = $TenantauthResult.ExpiresOn
+                $subobj.SubscriptionObject = $Subscription
+                $TenantAuthMap += $SubObj
+            }
         }
+        Else
+        {
+            Write-verbose "     Zero subscriptions found in tenant"
+        }
+        
     }
     
     #Add all subscriptions to global var
@@ -152,6 +162,8 @@ Function Connect-ArmSubscription
             }
             Else
             {
+                Write-verbose "Only a single subscription found for user, connecting to it"
+
                 #return the subscription
                 $script:AuthToken = $TenantAuthMap[0].AccessToken
                 $Script:RefreshToken = $TenantAuthMap[0].RefreshToken
