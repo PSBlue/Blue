@@ -1,6 +1,6 @@
 Function Remove-ArmResourceGroup
 {
-    [CmdletBinding()]
+    [cmdletBinding(SupportsShouldProcess=$true,ConfirmImpact='High')] 
 	Param (
         [Parameter(Mandatory=$true,ParameterSetName='ByObj',ValueFromPipeline=$true)]
         [Blue.ResourceGroup]$InputObject,
@@ -30,7 +30,11 @@ Function Remove-ArmResourceGroup
         
         
         $Uri = "$Baseuri/$Name"
-        $Result = Get-InternalRest -Uri $Uri -method "Delete"
+        if($PSCmdlet.ShouldProcess($script:CurrentSubscriptionId,"Remove resource group $Name"))
+        {
+            $Result = Get-InternalRest -Uri $Uri -method "Delete"    
+        }
+        
             
     }
     End

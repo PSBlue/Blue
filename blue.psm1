@@ -6,7 +6,7 @@ Get-ChildItem $psscriptroot\Rest\*.ps1 | Foreach-Object { . $_.FullName }
 Get-ChildItem $psscriptroot\ResourceGroup\*.ps1 | Foreach-Object { . $_.FullName }
 Get-ChildItem $psscriptroot\Resource\*.ps1 | Foreach-Object { . $_.FullName }
 
-#Setup internal variables
+#Setup internal variables. These will be filled by Connect-ArmSubscription and should not be manipulated directly other functions.
 [string]$script:CurrentSubscriptionId = $null
 [string]$script:AuthToken = $null
 [string]$script:RefreshToken = $null
@@ -23,8 +23,7 @@ $Script:AzureServiceLocations = @()
 #Other Defaults
 $Script:PsDefaultParameterValues.Add("Invoke-RestMethod:Verbose",$False)
 
-#Load autoload classes
-
+#Load autoload classes. Every file in Classes\Autoload needs to be a valid .cs file
 $Files = Get-ChildItem (Join-path $Script:thismodulepath "Classes\AutoLoad")
 foreach ($file in $files)
 {

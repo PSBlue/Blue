@@ -1,14 +1,14 @@
 Function Get-ArmResourceGroup
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName='ByName')]
 	Param (
         [Parameter(Mandatory=$true,ParameterSetName='ByObj',ValueFromPipeline=$true)]
         [Blue.ResourceGroup]$InputObject,
         
-        [Parameter(Mandatory=$false,ParameterSetName='ByName')]
+        [Parameter(Mandatory=$false,ParameterSetName='ByName',Position=0)]
         [String]$Name,
         
-        [Parameter(Mandatory=$false,ParameterSetName='ByName')]
+        [Parameter(Mandatory=$false,ParameterSetName='ByName',Position=1)]
         [String]$Location,
         
         [Parameter(Mandatory=$false,ParameterSetName='ByName')]
@@ -20,6 +20,7 @@ Function Get-ArmResourceGroup
     
     Begin
     {
+        #This is the basic test we do to ensure we have a valid connection to Azure
         if (!(Test-InternalArmConnection))
         {
             Write-Error "Please use Connect-ArmSubscription"
@@ -40,11 +41,13 @@ Function Get-ArmResourceGroup
         if ($Name)
         {
             $Uri = "$Baseuri/$Name"
+            #Name is specified, so we assume a single item
             $ResultResourceGroups = Get-InternalRest -Uri $Uri -ReturnType "Blue.ResourceGroup" -ReturnTypeSingular $true
         }
         Else
         {
             $Uri = $Baseuri
+            #Name is not specified, so we assume multiple items returned.
             $ResultResourceGroups = Get-InternalRest -Uri $Uri -ReturnType "Blue.ResourceGroup" -ReturnTypeSingular $false
         }
         
@@ -55,6 +58,7 @@ Function Get-ArmResourceGroup
     }
     End
     {
+        #Filter by location if specified
         if ($Location)
         {
             $ResourceGroups = $ResourceGroups | where {$_.Location -eq $Location}
@@ -70,6 +74,7 @@ Function Get-ArmResourceGroup
         }
         elseif ($ResourceGroups.Count -eq 1)
         {
+            #If only a single RG, return that instead of the array
             Return $ResourceGroups[0]    
         }
         Else
