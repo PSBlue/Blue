@@ -1,5 +1,5 @@
 install:
-  - cmd: "install pester -version 3.3.12"
+  - cmd: "cinst pester -version 3.3.12"
 
 build: false
 
