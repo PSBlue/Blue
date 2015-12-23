@@ -25,7 +25,7 @@ Function Get-InternalRest
 	if ($ApiVersion -eq $null)
 	{
         $ThisApiVersion = @()
-		$ThisApiVersion += $ApiVersions |where {$Uri -match $_.Uri}
+		$ThisApiVersion += $ApiVersions |where {$Uri -like $_.Uri} | select -first 1
 		if ($ThisApiVersion.count -ne 1)
 		{
 			Write-error "zero or multiple api versions found for url $uri"
