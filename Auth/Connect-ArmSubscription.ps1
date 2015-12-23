@@ -94,6 +94,8 @@ Function Connect-ArmSubscription
             $subobj.Expiry = $AuthResult.ExpiresOn
             $subobj.SubscriptionObject = $CurrentSub.SubscriptionObject
             $subobj.LoginUrl = $CurrentSub.LoginUrl
+            
+            #Add it back to the array. At this point, subobj will contain the updated access/refresh tokens, and the updated exirys
             $Script:AllSubscriptions += $subobj
             
             #$ThisSubsciption.AccessToken = $script:AuthToken
