@@ -5,6 +5,7 @@
 
 * [License](LICENSE.md)
 * [Contribution Guidelines](CONTRIBUTING.md)
+* [Running unit tests](UNITTESTS.md)
 
 ### Design goals for the module:
 * Better abstraction from Azure's APIs (i.e. more PowerShell-y)
