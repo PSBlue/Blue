@@ -21,6 +21,20 @@ Function Test-InternalArmConnection
 		}
 		
 		
+        if ($AuthSuccess -eq $false)
+        {
+            $CurrentSubObj = $Script:AllSubscriptions | where {$_.SubscriptionId -eq $script:CurrentSubscriptionId}
+            $RefreshToken = $CurrentSubObj.RefreshToken
+            $LoginUrl = $CurrentSubobj.LoginUrl
+            
+            $Null = Connect-ArmSubscription -RefreshToken $RefreshToken -LoginUrl $LoginUrl -ErrorAction SilentlyContinue -ErrorVariable connecterr
+            if ($ConnectErr)
+            {}
+            Else
+            {
+                $AuthSuccess = $true
+            }
+        }
 		
 		
 		if ($AuthSuccess -eq $true)

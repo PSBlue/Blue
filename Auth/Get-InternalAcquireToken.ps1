@@ -19,7 +19,10 @@ Function Get-InternalAcquireToken
         [String]$ResourceUrl,
 
         [ValidateSet("Never", "Auto", "Suppress", "Always")]
-        [String]$PromptBehavior
+        [String]$PromptBehavior,
+        
+        [Parameter(Mandatory=$True,ParameterSetName='ConnectByRefreshToken')]
+        $RefreshToken
     )
     
 
@@ -84,13 +87,24 @@ Function Get-InternalAcquireToken
         }
         
     }
+    ElseIf($PSCmdlet.ParameterSetName -eq "ConnectByRefreshToken")
+    {
+        try
+        {
+            $authResult = $AuthContext.AcquireTokenByRefreshToken($RefreshToken,$ClientId)    
+        }
+        Catch
+        {
+            Write-error "Error acquiring updated token using refresh token."
+            return
+        }
+        
+    }
 
     if ($authResult)
     {
         Return $authResult
     }
 
-
-	
 }
 
