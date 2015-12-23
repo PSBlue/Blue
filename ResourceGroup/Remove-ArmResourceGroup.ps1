@@ -5,7 +5,7 @@ Function Remove-ArmResourceGroup
         [Parameter(Mandatory=$true,ParameterSetName='ByObj',ValueFromPipeline=$true)]
         [Blue.ResourceGroup]$InputObject,
         
-        [Parameter(Mandatory=$true,ParameterSetName='ByName')]
+        [Parameter(Mandatory=$true,ParameterSetName='ByName', Position=0)]
         [String]$Name,
         [Switch]$Async
 	)
@@ -29,19 +29,34 @@ Function Remove-ArmResourceGroup
             $Name = $InputObject.Name
         }
         
+        $ContainedResources  =  Get-ArmResource -ResourceGroupName $Name -ErrorAction SilentlyContinue
+        
+        if ($ContainedResources)
+        {
+            $ProcessText  = "Remove resource group $Name, along with $($ContainedResources.Count.Tostring()) contained resources"
+        }
+        Else
+        {
+            $ProcessText  = "Remove resource group $Name, which is empty"
+        }
         
         $Uri = "$Baseuri/$Name"
-        if($PSCmdlet.ShouldProcess($script:CurrentSubscriptionId,"Remove resource group $Name"))
+        if($PSCmdlet.ShouldProcess($script:CurrentSubscriptionId,$ProcessText))
         {
             
-            $Result = Get-InternalRest -Uri $Uri -method "Delete" -ReturnFull $true 
+            $Result = Get-InternalRest -Uri $Uri -method "Delete" -ReturnFull $true
+            
+            #The "Location" Header of the returned object is the URL to poll in order to check for deletion status
+            #The status code returned when hitting that URL will change from 202 to 200 when the operation has completed
             $OperationUri = $Result.Headers.Location
             if ($async -eq $true)
             {
+                #We don't care what happened after we asked to delete it
                 Write-Verbose "Deletion request successfully sent"
             }
             Else
             {
+                #Poll the operationuri to wait for the thing to complete
                 Wait-ArmOperation -Uri $OperationUri
             }
             
