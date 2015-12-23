@@ -58,7 +58,11 @@ Function Get-InternalAcquireToken
                 Write-verbose "     Attempting to authenticate using TokenCache"
                 $ThisPromptBehavior = [Microsoft.IdentityModel.Clients.ActiveDirectory.PromptBehavior]::Never        
             }
-            $ThisPromptBehavior = [Microsoft.IdentityModel.Clients.ActiveDirectory.PromptBehavior]::Auto
+            Else
+            {
+                $ThisPromptBehavior = [Microsoft.IdentityModel.Clients.ActiveDirectory.PromptBehavior]::Auto
+            }
+            
         }
         Try
         {
