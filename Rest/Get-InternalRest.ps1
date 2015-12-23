@@ -10,12 +10,14 @@ Function Get-InternalRest
         $ApiVersion,
         [Parameter(Mandatory=$false)]
         $QueryStrings,
+        [bool]$ReturnFull=$False,
         [Parameter(Mandatory=$true,ParameterSetName='ReturnStronglyTypedObject')]
         $ReturnType,
         [Parameter(Mandatory=$true,ParameterSetName='ReturnStronglyTypedObject')]
         $ReturnTypeSingular,
         [ValidateSet("Get", "Delete")]
         [String]$Method="Get"
+        
 	)
 	
 	$ApiVersions = Get-Content (Join-Path $Script:ThisModulePath "Config\Apiversions.json") -Raw| convertfrom-Json
@@ -89,7 +91,15 @@ Function Get-InternalRest
     {
         Try
         {
-            $Result = Invoke-RestMethod -Method $Method -Uri $Uri -Headers $headers
+            if ($ReturnFull -eq $true)
+            {
+                $Result = Invoke-WebRequest -Method $Method -Uri $Uri -Headers $headers
+            }
+            Else
+            {
+                $Result = Invoke-RestMethod -Method $Method -Uri $Uri -Headers $headers
+            }
+            
         }
         Catch
         {}
