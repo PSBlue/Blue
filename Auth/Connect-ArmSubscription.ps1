@@ -118,14 +118,15 @@ Function Connect-ArmSubscription
         
         Write-Debug "Using access key $($TenantauthResult.AccessToken)"
         $SubscriptionResult  = Get-InternalRest -Uri "https://management.azure.com/subscriptions" -BearerToken $TenantauthResult.AccessToken
-        
         if ($SubscriptionResult.Value.count -gt 0)
         {
             foreach ($Subscription in $SubscriptionResult.Value)
             {
                 Write-verbose "     Found subscription $($Subscription.subscriptionId)"
-                $SubObj = "" | Select SubscriptionId,TenantId,AccessToken,RefreshToken, Expiry, SubscriptionObject
+                $SubObj = "" | Select SubscriptionId,TenantId,AccessToken,RefreshToken, Expiry, SubscriptionObject, DisplayName, State
                 $subobj.SubscriptionId = $Subscription.subscriptionId
+                $subobj.DisplayName = $Subscription.displayName
+                $SubObj.State = $Subscription.state
                 $subobj.TenantId = $Tenant.tenantId
                 $subobj.AccessToken = $TenantAuthResult.AccessToken
                 $subobj.RefreshToken = $TenantauthResult.RefreshToken
@@ -178,13 +179,28 @@ Function Connect-ArmSubscription
             $ThisSubscription =  $TenantAuthMap[0]
         }
     }
-    ElseIf ($TenantAuthMap.count -gt 1)
+    ElseIf ($TenantAuthMap.count -gt 1 -and $SubscriptionId)
     {
         #Multiple returned, make surethe specified is in the list
         if (($TenantAuthMap | select -ExpandProperty SubscriptionId ) -notcontains $SubscriptionId)
         {
-            Write-Error ""
+            Write-Error "specified subscriptionId $SubscriptionId was not found for tenant" -ErrorAction Stop
         }
+    }
+    ElseIf ($TenantAuthMap.count -gt 1) {
+        Write-Warning -Message "Multiple Subscriptions found and none specified. Please select the desired one"
+        $i = 0
+        $list = foreach ($T in $TenantAuthMap) {
+            $i++
+            '[{0}] - {1} - {2}' -f $i,$T.DisplayName,$T.SubscriptionId
+        }
+        do {
+            $result = Read-Host -Prompt "Enter the index number of the desired subscription: `n$($List | Out-String)"
+        } while ($result -gt $TenantAuthMap.count -or $result -eq 0)
+        $script:AuthToken = $TenantAuthMap[$result -1].AccessToken
+        $Script:RefreshToken = $TenantAuthMap[$result -1].RefreshToken
+        $script:TokenExpirationUtc = $TenantAuthMap[$result -1].Expiry
+        $ThisSubscription =  $TenantAuthMap[$result -1]
     }
 
     $script:CurrentSubscriptionId = $ThisSubscription.SubscriptionId
