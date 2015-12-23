@@ -41,7 +41,9 @@ Function Get-InternalRest
 	if ($BearerToken -eq $null)
 	{
 		$BearerToken = $script:AuthToken
-		#TODO Make sure we're within the timing period of the Access Token
+		if (-not (Test-InternalTokenNotExpired -Token $BearerToken)) {
+            Write-Error -Message "Authentication token has expired. Run Connect-ArmSubscription to acquire a new one" -ErrorAction Stop
+        }
 		$TokenExpiry = $script:TokenExpirationUtc
 		
 	}
