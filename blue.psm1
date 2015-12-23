@@ -20,8 +20,9 @@ $Script:DefaultAuthRedirectUri = "urn:ietf:wg:oauth:2.0:oob"
 $Script:DefaultClientId = "1950a258-227b-4e31-a9cf-717495945fc2"
 $Script:AzureServiceLocations = @()
 
-#Other Defaults
+#Other Defaults - verboseing web/rest requests is too noisy
 $Script:PsDefaultParameterValues.Add("Invoke-RestMethod:Verbose",$False)
+$Script:PsDefaultParameterValues.Add("Invoke-WebRequest:Verbose",$False)
 
 #Load autoload classes. Every file in Classes\Autoload needs to be a valid .cs file
 $Files = Get-ChildItem (Join-path $Script:thismodulepath "Classes\AutoLoad")
