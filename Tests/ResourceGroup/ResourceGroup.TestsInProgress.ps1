@@ -6,7 +6,7 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
 Import-Module "$ModuleFolder\blue.psd1" -force -Verbose:$false
 Import-Module "$ModuleFolder\blue.psm1" -force -Verbose:$false
 
-if (Get-item "LocalVars.Config")
+if (Get-item "LocalVars.Config" -ErrorAction SilentlyContinue
 {
     Tests\ConfigureTestEnvironment.ps1
 }
