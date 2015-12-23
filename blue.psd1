@@ -10,7 +10,7 @@ ModuleVersion = '0.0.1'
 GUID = '47454906-b8f5-47fa-9664-b26456647d69'
 
 # Author of this module
-Author = 'Trond Hindenes'
+Author = 'Trond Hindenes and others'
 
 # Company or vendor of this module
 CompanyName = ''
@@ -86,10 +86,10 @@ PrivateData = @{
 		Tags = @('Azure', 'MicrosoftAzure', 'ARM', 'AzureResourceManager')
 
 		# A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://github.com/trondhindenes/Blue/blob/devel/LICENSE.md'
 
         # A URL to the main website for this project.
-		ProjectUri = ''
+		ProjectUri = 'https://github.com/trondhindenes/Blue'
 
 		# A URL to an icon representing this module.
         # IconUri = ''
