@@ -150,35 +150,6 @@ Function Connect-ArmSubscription
     {
         #Error
     }
-    ElseIf ($TenantAuthMap.count -eq 1)
-    {
-        #Only one returned, make sure its the right one
-        if ($SubscriptionId)
-        {
-            if ($SubscriptionId -ne $TenantAuthMap[0].SubscriptionId)
-            {
-                #We got authenticated, but not to the requested subscription
-                Write-error "We got authenticated, but not to the requested subscription"
-                Return
-            }
-            Else
-            {
-                Write-verbose "Only a single subscription found for user, connecting to it"
-
-                #return the subscription
-                $script:AuthToken = $TenantAuthMap[0].AccessToken
-                $Script:RefreshToken = $TenantAuthMap[0].RefreshToken
-                $script:TokenExpirationUtc = $TenantAuthMap[0].Expiry
-                $ThisSubscription =  $TenantAuthMap[0]
-               
-            }
-        }
-        Else
-        {
-            #return the subscription
-            $ThisSubscription =  $TenantAuthMap[0]
-        }
-    }
     ElseIf ($TenantAuthMap.count -gt 1 -and $SubscriptionId)
     {
         #Multiple returned, make surethe specified is in the list
@@ -186,6 +157,18 @@ Function Connect-ArmSubscription
         {
             Write-Error "specified subscriptionId $SubscriptionId was not found for tenant" -ErrorAction Stop
         }
+    }
+    ElseIf ($TenantAuthMap.count -eq 1)
+    {
+        #Only one returned, make sure its the right one
+        
+        #return the subscription
+        $script:AuthToken = $TenantAuthMap[0].AccessToken
+        $Script:RefreshToken = $TenantAuthMap[0].RefreshToken
+        $script:TokenExpirationUtc = $TenantAuthMap[0].Expiry
+        $script:CurrentSubscriptionId = $TenantAuthMap[0].SubscriptionId
+        $ThisSubscription =  $TenantAuthMap[0]               
+         
     }
     ElseIf ($TenantAuthMap.count -gt 1) {
         Write-Warning -Message "Multiple Subscriptions found and none specified. Please select the desired one"
