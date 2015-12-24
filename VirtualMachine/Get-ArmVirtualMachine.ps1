@@ -2,11 +2,15 @@ Function Get-ArmVirtualMachine
 {
     [CmdletBinding(DefaultParameterSetName='ByNameAndResourceGroupName')]
     Param (
+        [Parameter(Mandatory=$False,ParameterSetName='ByNameAndResourceGroupId',ValueFromPipeline=$false)]
         [Parameter(Mandatory=$False,ParameterSetName='ByNameAndResourceGroupName',ValueFromPipeline=$false)]
         [String]$Name,
         
-        [Parameter(Mandatory=$False,ParameterSetName='ByNameAndResourceGroupName',ValueFromPipeline=$false)]
+        [Parameter(Mandatory=$False,ParameterSetName='ByNameAndResourceGroupName',ValueFromPipeline=$false)] 
         [String]$ResourceGroupName,
+        
+        [Parameter(Mandatory=$True,ParameterSetName='ByNameAndResourceGroupId',ValueFromPipelineByPropertyName=$true)]
+        [String]$ResourceGroupId,
         
         [Parameter(Mandatory=$true,ParameterSetName='ByObj',ValueFromPipeline=$true)]
         [Blue.VirtualMachine]$InputObject
@@ -24,9 +28,13 @@ Function Get-ArmVirtualMachine
     }
     Process
     {
+        if ($ResourceGroupId)
+        {
+            $ResourceGroupName = Get-ArmResourceGroup | where {$_.ResourceGroupId -eq $ResourceGroupId} | Select -ExpandProperty Name
+        }
         if ($ResourceGroupName)
         {
-            $Uri = "https://management.azure.com/subscriptions/$($script:CurrentSubscriptionId)/resourceGroups/AnsibleStuff/providers/Microsoft.Compute/virtualMachines/"    
+            $Uri = "https://management.azure.com/subscriptions/$($script:CurrentSubscriptionId)/resourceGroups/$ResourceGroupName/providers/Microsoft.Compute/virtualMachines/"    
         }
         Elseif ($InputObject)
         {
