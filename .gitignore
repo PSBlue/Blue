@@ -1,1 +1,5 @@
 LocalVars.config
+*.sln
+.vs/
+*.user
+*.pssproj

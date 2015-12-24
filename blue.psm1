@@ -7,6 +7,7 @@ Get-ChildItem $psscriptroot\ResourceGroup\*.ps1 | Foreach-Object { . $_.FullName
 Get-ChildItem $psscriptroot\Resource\*.ps1 | Foreach-Object { . $_.FullName }
 Get-ChildItem $psscriptroot\VirtualMachine\*.ps1 | Foreach-Object { . $_.FullName }
 Get-ChildItem $psscriptroot\Network\*.ps1 | Foreach-Object { . $_.FullName }
+Get-ChildItem $psscriptroot\Automation\*.ps1 | Foreach-Object { . $_.FullName }
 
 #Setup internal variables. These will be filled by Connect-ArmSubscription and should not be manipulated directly other functions.
 [string]$script:CurrentSubscriptionId = $null

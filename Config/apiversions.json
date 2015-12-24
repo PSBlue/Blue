@@ -1,11 +1,14 @@
 [
     {
-        "ProviderName": "Microsoft.Compute",
-        "api-version": "2015-05-01-preview"
-    }
-    ,
+      "ProviderName": "Microsoft.Compute",
+      "api-version": "2015-05-01-preview"
+    },
     {
-        "ProviderName": "Microsoft.Network",
-        "api-version": "2015-05-01-preview"
+      "ProviderName": "Microsoft.Network",
+      "api-version": "2015-05-01-preview"
+    },
+    {
+      "ProviderName": "Microsoft.Automation",
+      "api-version": "2015-10-31"
     }
 ]
