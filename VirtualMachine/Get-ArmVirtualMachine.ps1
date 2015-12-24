@@ -1,12 +1,12 @@
 Function Get-ArmVirtualMachine
 {
-    [CmdletBinding(DefaultParameterSetName='ByNameAndResourceGroupName')]
+    [CmdletBinding(DefaultParameterSetName='ByNothing')]
     Param (
         [Parameter(Mandatory=$False,ParameterSetName='ByNameAndResourceGroupId',ValueFromPipeline=$false)]
         [Parameter(Mandatory=$False,ParameterSetName='ByNameAndResourceGroupName',ValueFromPipeline=$false)]
         [String]$Name,
         
-        [Parameter(Mandatory=$False,ParameterSetName='ByNameAndResourceGroupName',ValueFromPipeline=$false)] 
+        [Parameter(Mandatory=$True,ParameterSetName='ByNameAndResourceGroupName',ValueFromPipeline=$false)] 
         [String]$ResourceGroupName,
         
         [Parameter(Mandatory=$True,ParameterSetName='ByNameAndResourceGroupId',ValueFromPipelineByPropertyName=$true)]
