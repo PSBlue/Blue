@@ -61,7 +61,7 @@ Description = 'An community-driven alternative to the official Powershell module
 # NestedModules = @()
 
 # Functions to export from this module
-FunctionsToExport = "*arm*"
+FunctionsToExport = "*-arm*"
 
 # Cmdlets to export from this module
 CmdletsToExport = @()
