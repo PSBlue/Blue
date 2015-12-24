@@ -32,12 +32,12 @@ Function Get-ArmResource
         if ($ResourceGroupName)
         {
             $Uri = "$Baseuri/resourcegroups/$ResourceGroupName/Resources"
-            $ResultResources = Get-InternalRest -Uri $Uri -ReturnType "Blue.Resource" -ReturnTypeSingular $false
+            $ResultResources = Get-InternalRest -Uri $Uri -ReturnType "Blue.Resource" -ReturnTypeSingular $false -apiversion "2015-01-01"
         }
         Else
         {
             $Uri = "$Baseuri/Resources"
-            $ResultResources = Get-InternalRest -Uri $Uri -ReturnType "Blue.Resource" -ReturnTypeSingular $false
+            $ResultResources = Get-InternalRest -Uri $Uri -ReturnType "Blue.Resource" -ReturnTypeSingular $false -apiversion "2015-01-01"
         }
         
         if ($ResultResources)
