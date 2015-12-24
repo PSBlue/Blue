@@ -58,6 +58,12 @@ Function Get-ArmResourceGroup
     }
     End
     {
+        #Fill the ResourceGroupId Attribute
+        foreach ($rg in $ResourceGroups)
+        {
+            $rg.ResourceGroupId = $rg.id
+        }
+        
         #Filter by location if specified
         if ($Location)
         {
