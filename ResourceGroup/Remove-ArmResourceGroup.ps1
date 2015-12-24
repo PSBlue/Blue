@@ -44,7 +44,7 @@ Function Remove-ArmResourceGroup
         if($PSCmdlet.ShouldProcess($script:CurrentSubscriptionId,$ProcessText))
         {
             
-            $Result = Get-InternalRest -Uri $Uri -method "Delete" -ReturnFull $true
+            $Result = Get-InternalRest -Uri $Uri -method "Delete" -ReturnFull $true  -apiversion "2015-01-01"
             
             #The "Location" Header of the returned object is the URL to poll in order to check for deletion status
             #The status code returned when hitting that URL will change from 202 to 200 when the operation has completed
@@ -57,7 +57,7 @@ Function Remove-ArmResourceGroup
             Else
             {
                 #Poll the operationuri to wait for the thing to complete
-                Wait-ArmOperation -Uri $OperationUri
+                Wait-ArmOperation -Uri $OperationUri -apiversion "2015-01-01"
             }
             
         }

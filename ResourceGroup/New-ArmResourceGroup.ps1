@@ -28,7 +28,7 @@ Function New-ArmResourceGroup
             $Data | add-member -MemberType NoteProperty -Name tags -Value $Tags
         }
 		$Uri = "https://management.azure.com/subscriptions/$($script:CurrentSubscriptionId)/resourcegroups/$Name"
-		$RG = Post-InternalRest -uri $Uri -Data $Data -method "Put" -ReturnType "Blue.ResourceGroup" -ReturnTypeSingular $true
+		$RG = Post-InternalRest -uri $Uri -Data $Data -method "Put" -ReturnType "Blue.ResourceGroup" -ReturnTypeSingular $true -apiversion "2015-01-01"
 	}
     End
     {
