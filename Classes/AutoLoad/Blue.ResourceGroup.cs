@@ -10,6 +10,7 @@ namespace Blue
         public Dictionary<string, string> Tags {get;set;}
         public Dictionary<string, string> Properties {get;set;}
         public string Id { get; set; }
+        public string ResourceGroupId { get; set; }
     }
 }
 
