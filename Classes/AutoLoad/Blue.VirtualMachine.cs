@@ -89,12 +89,12 @@ namespace Blue
 
     public class VirtualMachine
     {
+        public string Name { get; set; }
+        public string Location { get; set; }
         public Properties Properties { get; set; }
         public List<VmResource> Resources { get; set; }
-        public string Id { get; set; }
-        public string Name { get; set; }
         public string Type { get; set; }
-        public string Location { get; set; }
+        public string Id { get; set; }
     }
 
 }
