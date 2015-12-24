@@ -57,15 +57,18 @@ Function Get-ArmVirtualMachine
         }
         
         
-
+        $UriParams = @{}
+        $UriParams.Add("Uri",$Uri)
+        $UriParams.Add("ReturnType","Blue.VirtualMachine")
+        $UriParams.Add("ProviderName","Microsoft.Compute")
         
         if ($Name)
         {
-            $ResultVirtualMachines = Get-InternalRest -Uri $Uri -ReturnType "Blue.VirtualMachine" -ReturnTypeSingular $true
+            $ResultVirtualMachines = Get-InternalRest @UriParams -ReturnTypeSingular $true
         }
         Else
         {
-            $ResultVirtualMachines = Get-InternalRest -Uri $Uri -ReturnType "Blue.VirtualMachine" -ReturnTypeSingular $false    
+            $ResultVirtualMachines = Get-InternalRest @UriParams -ReturnTypeSingular $false    
         }
         
         $VirtualMachines += $ResultVirtualMachines
