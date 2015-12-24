@@ -29,6 +29,14 @@ Function Remove-ArmResourceGroup
             $Name = $InputObject.Name
         }
         
+        #Make sure the thing exists
+        $RG = Get-ArmResourceGroup -Name $Name -ErrorAction SilentlyContinue
+        if (!$Rg)
+        {
+            Write-error "Resource Group $Name not found"
+            Return
+        }
+        
         $ContainedResources  =  Get-ArmResource -ResourceGroupName $Name -ErrorAction SilentlyContinue
         
         if ($ContainedResources)
