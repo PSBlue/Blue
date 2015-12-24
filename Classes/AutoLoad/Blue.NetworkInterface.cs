@@ -25,9 +25,9 @@ namespace Blue
     public class IpConfiguration
     {
         public string name { get; set; }
-        public string id { get; set; }
         public string etag { get; set; }
         public IpConfigurationProperties properties { get; set; }
+        public string id { get; set; }
     }
 
     public class DnsSettings
@@ -60,10 +60,10 @@ namespace Blue
     public class NetworkInterface
     {
         public string Name { get; set; }
-        public string Id { get; set; }
         public string Etag { get; set; }
         public string Type { get; set; }
         public string Location { get; set; }
         public NetworkInterfaceProperties Properties { get; set; }
+        public string Id { get; set; }
     }    
 }
