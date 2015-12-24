@@ -16,11 +16,16 @@
 * Simple authentication support (MS account and OrgId)¨
 * Helper functions to make function development as easy as possible (the *armresourcegroup functions will serve as "templates")
 
-### Features in progress
-* Interacting with Resource Groupx
+### Somewhat stable features
+* Interacting with Resource Group
 * support for credentials with multiple subscriptions
+* Support for refresh tokens
+
+### Features in progress
+* Azure Automation functions (@bgelens)
+* IaaS functions (@trondhindenes)
 
 ### Features planned
-* Azure Automation functions
-* IaaS functions
-* Support for refresh tokens
+
+
+
