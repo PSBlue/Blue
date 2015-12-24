@@ -12,7 +12,7 @@ Function Test-InternalArmConnection
 		$Uri = "https://management.azure.com/subscriptions/$($script:CurrentSubscriptionId)"
 		Try 
 		{
-			$Result =Get-InternalRest -Uri $Uri
+			$Result =Get-InternalRest -Uri $Uri -apiversion "2015-01-01"
 			$AuthSuccess = $true
 		}
 		Catch

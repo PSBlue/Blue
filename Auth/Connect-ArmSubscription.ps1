@@ -122,7 +122,7 @@ Function Connect-ArmSubscription
 		
 		Write-Verbose -Message "Authenticated as $($AuthResult.UserInfo.DisplayableId)"
 		
-		$Result = Get-InternalRest -Uri "https://management.azure.com/tenants" -BearerToken $AuthResult.AccessToken
+		$Result = Get-InternalRest -Uri "https://management.azure.com/tenants" -BearerToken $AuthResult.AccessToken -ApiVersion "2015-01-01"
 	}
 	Else
 	{
@@ -165,7 +165,7 @@ Function Connect-ArmSubscription
             $TenantauthResult = Get-InternalAcquireToken @Params
         
             Write-Debug "Using access key $($TenantauthResult.AccessToken)"
-            $SubscriptionResult  = Get-InternalRest -Uri "https://management.azure.com/subscriptions" -BearerToken $TenantauthResult.AccessToken
+            $SubscriptionResult  = Get-InternalRest -Uri "https://management.azure.com/subscriptions" -BearerToken $TenantauthResult.AccessToken -Apiversion "2015-01-01"
             if ($SubscriptionResult.Value.count -gt 0)
             {
                 foreach ($Subscription in $SubscriptionResult.Value)
@@ -241,7 +241,7 @@ Function Connect-ArmSubscription
         $script:TokenExpirationUtc = $ThisSubscription.Expiry
     
          #Grab the available locations for the subscriptions
-        $LocationsResult = Get-InternalRest -Uri "https://management.azure.com/subscriptions/$script:CurrentSubscriptionId/locations" -ReturnType "Blue.AzureServiceLocation" -ReturnTypeSingular $false
+        $LocationsResult = Get-InternalRest -Uri "https://management.azure.com/subscriptions/$script:CurrentSubscriptionId/locations" -ReturnType "Blue.AzureServiceLocation" -ReturnTypeSingular $false -ApiVersion "2015-01-01"
         $Script:AzureServiceLocations += $LocationResult
 
 
