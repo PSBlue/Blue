@@ -65,7 +65,7 @@ Function Remove-ArmResourceGroup
             Else
             {
                 #Poll the operationuri to wait for the thing to complete
-                Wait-ArmOperation -Uri $OperationUri -apiversion "2015-01-01"
+                Wait-InternalArmOperation -Uri $OperationUri -apiversion "2015-01-01"
             }
             
         }

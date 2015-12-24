@@ -1,4 +1,4 @@
-Function Wait-ArmOperation
+Function Wait-InternalArmOperation
 {
     Param (
         $Uri,
