@@ -26,11 +26,13 @@ Function Get-ArmNetworkInterface
             Write-Error "Please use Connect-ArmSubscription"
             return
         }
-        $QueryNics=@()
-        $Nics = @()   
+        
+        $MasterNics = @()   
     }
     Process
     {
+        $QueryNics=@()
+        $Nics = @()
         if ($VirtualMachineId)
         {
             $VM = Get-ArmVirtualMachine | where {$_.VirtualMachineId -eq $VirtualMachineId}
@@ -103,21 +105,21 @@ Function Get-ArmNetworkInterface
             
         }
         
-        
+        $MasterNics += $Nics;$Nics=$null
     }
     End
     {
-        if (($Nics.Count -eq 0) -and ($Name))
+        if (($MasterNics.Count -eq 0) -and ($Name))
         {
             Write-Error "Network Interface $Name not found"    
         }
-        ElseIf ($Nics.count -eq 1)
+        ElseIf ($MasterNics.count -eq 1)
         {
-            return $Nics[0]
+            return $MasterNics[0]
         }
         Else
         {
-            return $Nics
+            return $MasterNics
         }
         
         
