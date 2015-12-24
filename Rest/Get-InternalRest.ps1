@@ -9,6 +9,8 @@ Function Get-InternalRest
 		[Parameter(Mandatory=$false)]
         $ApiVersion,
         [Parameter(Mandatory=$false)]
+        $ProviderName,
+        [Parameter(Mandatory=$false)]
         $QueryStrings,
         [bool]$ReturnFull=$False,
         [Parameter(Mandatory=$true,ParameterSetName='ReturnStronglyTypedObject')]
@@ -22,21 +24,45 @@ Function Get-InternalRest
 	
 	$ApiVersions = Get-Content (Join-Path $Script:ThisModulePath "Config\Apiversions.json") -Raw| convertfrom-Json
 	
-	if ($ApiVersion -eq $null)
+    if (($ApiVersion -eq $null) -and ($ProviderName -ne $null))
+    {
+        #Lookup the api version
+        $ApiVersion = $ApiVersions | where {$_.ProviderName -eq $ProviderName} | Select -expandProperty "api-version"
+    }
+    Elseif (($ApiVersion -eq $null) -and ($ProviderName -eq $null))
+    {
+        Write-error "Neither apiversion or providername was specified. "
+        return
+        
+    }
+    ElseIf ($ApiVersion)
+    {
+        #All good
+    }
+    Else
 	{
-        $ThisApiVersion = @()
-		$ThisApiVersion += $ApiVersions |where {$Uri -like $_.Uri} | select -first 1
-		if ($ThisApiVersion.count -ne 1)
-		{
-			Write-error "zero or multiple api versions found for url $uri"
-			Return
-		}
-		Else
-		{
-			$ApiVersion = $ThisApiVersion."api-version"
-		}
+        #Best-efford attempt to get the apiversion
+        Foreach ($ApiVersionEntry in $ApiVersions)
+        {
+            if ($Uri -match $ApiVersionEntry.ProviderName)
+            {
+                $ApiVersion = $ApiVersionEntry."api-version"
+            }
+        }
+    
+        if ($apiversion)
+        {
+            Write-warning "Best-efford attempt to figure out the api-version resulted in version $ApiVersion. This may be incorrect"
+        }        
+        Else
+        {
+            Write-error "Could not calculate api-version. The calling function should specify providername or apiversion."
+            return
+        }        
+        
 	}
 	
+    
 	
 	if ($BearerToken -eq $null)
 	{

@@ -1,26 +1,6 @@
 [
     {
-        "uri": "https://management.azure.com/*/providers/Microsoft.Compute/*",
+        "ProviderName": "Microsoft.Compute",
         "api-version": "2015-05-01-preview"
     }
-    ,
-	{
-		"uri": "https://management.azure.com/subscriptions",
-		"api-version": "2015-01-01"
-	}
-	,
-    	{
-		"uri": "https://management.azure.com/subscriptions/*",
-		"api-version": "2015-01-01"
-	}
-	,
-	{
-		"uri": "https://management.azure.com/tenants",
-		"api-version": "2015-01-01"
-	}
-	,
-	{
-		"uri": "https://management.azure.com/subscriptions/*/resourcegroups",
-		"api-version": "2015-01-01"
-	}
 ]

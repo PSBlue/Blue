@@ -3,7 +3,8 @@ Function Wait-ArmOperation
     Param (
         $Uri,
         $InProgressStatus=202,
-        $FinishedStatus=200
+        $FinishedStatus=200,
+        $ApiVersion
     )
     
     $Counter = 1
@@ -14,7 +15,7 @@ Function Wait-ArmOperation
         $nowtime = Get-Date
         $ElapsedTime = $nowtime - $OperationStart
         Write-Verbose "Waiting for arm operation (elapsed seconds: $($ElapsedTime.Totalseconds))"
-        $OperationResult = Get-InternalRest -Uri $Uri -ReturnFull $true
+        $OperationResult = Get-InternalRest -Uri $Uri -ReturnFull $true -ApiVersion $ApiVersion
         if ($OperationResult.StatusCode -eq $FinishedStatus)
         {
             #Arm Operation done
