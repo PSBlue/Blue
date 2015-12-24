@@ -76,6 +76,11 @@ Function Get-ArmVirtualMachine
     }
     End
     {
+        foreach ($vm in $VirtualMachines)
+        {
+            $vm.VirtualMachineId = $vm.Id
+        }
+        
         if (($VirtualMachines.Count -eq 0) -and ($Name))
         {
             Write-Error "VM $Name not found"    

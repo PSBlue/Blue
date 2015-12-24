@@ -50,14 +50,14 @@ namespace Blue
         public List<object> Secrets { get; set; }
     }
 
-    public class NetworkInterface
+    public class NetworkInterfaceReference
     {
         public string Id { get; set; }
     }
 
     public class NetworkProfile
     {
-        public List<NetworkInterface> NetworkInterfaces { get; set; }
+        public List<NetworkInterfaceReference> NetworkInterfaces { get; set; }
     }
 
     public class BootDiagnostics
@@ -82,7 +82,7 @@ namespace Blue
         public string ProvisioningState { get; set; }
     }
 
-    public class VmResource
+    public class VmResourceReference
     {
         public string Id { get; set; }
     }
@@ -92,9 +92,10 @@ namespace Blue
         public string Name { get; set; }
         public string Location { get; set; }
         public Properties Properties { get; set; }
-        public List<VmResource> Resources { get; set; }
+        public List<VmResourceReference> Resources { get; set; }
         public string Type { get; set; }
         public string Id { get; set; }
+        public string VirtualMachineId { get; set; }
     }
 
 }
