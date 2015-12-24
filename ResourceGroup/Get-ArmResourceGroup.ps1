@@ -42,13 +42,13 @@ Function Get-ArmResourceGroup
         {
             $Uri = "$Baseuri/$Name"
             #Name is specified, so we assume a single item
-            $ResultResourceGroups = Get-InternalRest -Uri $Uri -ReturnType "Blue.ResourceGroup" -ReturnTypeSingular $true
+            $ResultResourceGroups = Get-InternalRest -Uri $Uri -ReturnType "Blue.ResourceGroup" -ReturnTypeSingular $true -apiversion "2015-01-01"
         }
         Else
         {
             $Uri = $Baseuri
             #Name is not specified, so we assume multiple items returned.
-            $ResultResourceGroups = Get-InternalRest -Uri $Uri -ReturnType "Blue.ResourceGroup" -ReturnTypeSingular $false
+            $ResultResourceGroups = Get-InternalRest -Uri $Uri -ReturnType "Blue.ResourceGroup" -ReturnTypeSingular $false -apiversion "2015-01-01"
         }
         
         if ($ResultResourceGroups)
