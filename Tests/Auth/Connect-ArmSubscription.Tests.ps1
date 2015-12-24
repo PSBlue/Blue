@@ -106,7 +106,7 @@ Describe "Connect-ArmSubscription" {
 }
  
 Describe "ConfigFile" {
-    [String]$Json = Get-Content "Config\apiversions.json" -Raw | convertfrom-Json
+    $Json = Get-Content "Config\apiversions.json" -Raw | convertfrom-Json
     
     It "should be parseable json" {
          $Json |  Should Not BeNullOrEmpty
