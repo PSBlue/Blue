@@ -6,7 +6,7 @@ $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
 Import-Module "$ModuleFolder\blue.psd1" -force -Verbose:$false
 Import-Module "$ModuleFolder\blue.psm1" -force -Verbose:$false
 
-if (Get-item "LocalVars.Config" -ErrorAction SilentlyContinue
+if (Get-item "LocalVars.Config" -ErrorAction SilentlyContinue)
 {
     Tests\ConfigureTestEnvironment.ps1
 }
@@ -16,23 +16,24 @@ $SuceedingCred = New-Object System.Management.Automation.PsCredential($env:logon
 
 #Connect to azure
 $null = Connect-ArmSubscription -credential $SuceedingCred -SubscriptionId $env:subscriptionid
-$RGs = Get-ArmResourceGroup
+
 
 Describe "Get-ResourceGroup" {
     It "Is able to get a single RG" {
-        $null = Connect-ArmSubscription -credential $SuceedingCred -SubscriptionId $env:subscriptionid
-        $RG[0].Name
-        (Get-ArmResourceGroup -Name $RGs[0]).Gettype().FullName | Should be "Blue.ResourceGroup"
+        #$null = Connect-ArmSubscription -credential $SuceedingCred -SubscriptionId $env:subscriptionid
+        $RGs = Get-ArmResourceGroup
+        $Rg = Get-ArmResourceGroup -Name ($rgs[0].Name)
+        $RGs[0].Gettype().FullName | Should be "Blue.ResourceGroup"
     }
     
     It "Is able to get multiple RGs" {
-        $null = Connect-ArmSubscription -credential $SuceedingCred -SubscriptionId $env:subscriptionid
-        (Get-ArmResourceGroup -Name $RGs[0]).GetType().Basetype.FullName | Should be "System.Array"
+        $RGs = Get-ArmResourceGroup
+        $RGs.GetType().BaseType.ToString() | Should be "System.Array"
     }
     
     It "Does not throw on errors" {
-        $null = Connect-ArmSubscription -credential $SuceedingCred -SubscriptionId $env:subscriptionid
-        Get-ArmResourceGroup -Name "Kwerpackle" | Should not throw
+        Get-ArmResourceGroup -Name "Kwerpackle" -ErrorAction SilentlyContinue -ErrorVariable myerr
+        $MyErr | Should Not BeNullOrEmpty
     }
 }
 
