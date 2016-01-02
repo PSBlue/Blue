@@ -22,6 +22,7 @@ $Script:ResourceUrl = "https://management.core.windows.net/"
 $Script:DefaultAuthRedirectUri = "urn:ietf:wg:oauth:2.0:oob"
 $Script:DefaultClientId = "1950a258-227b-4e31-a9cf-717495945fc2"
 $Script:AzureServiceLocations = @()
+$Script:ImageSearchApiUrl = "http://blueimageapiweb.azurewebsites.net/api/ImageSearch"
 
 #Other Defaults - verboseing web/rest requests is too noisy
 $Script:PsDefaultParameterValues.Add("Invoke-RestMethod:Verbose",$False)
