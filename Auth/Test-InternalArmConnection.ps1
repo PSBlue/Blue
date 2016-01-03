@@ -26,6 +26,7 @@ Function Test-InternalArmConnection
             $CurrentSubObj = $Script:AllSubscriptions | where {$_.SubscriptionId -eq $script:CurrentSubscriptionId}
             $RefreshToken = $CurrentSubObj.RefreshToken
             $LoginUrl = $CurrentSubobj.LoginUrl
+            Write-verbose "Attempting to update AccessToken using RefreshToken"
             
             $Null = Connect-ArmSubscription -RefreshToken $RefreshToken -LoginUrl $LoginUrl -ErrorAction SilentlyContinue -ErrorVariable connecterr
             if ($ConnectErr)
