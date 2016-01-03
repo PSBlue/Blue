@@ -1,5 +1,6 @@
 Function Get-ArmVmImage
 {
+    [CmdletBinding()]
     Param(
         $Location,
         $Publisher,
