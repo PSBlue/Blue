@@ -1,3 +1,22 @@
+<#
+.Synopsis
+   Gets a list of available VM Images
+.DESCRIPTION
+   Lists available VM images in Azure.
+.EXAMPLE
+   Get-ArmVmImage -Location "westeurope" -Publisher "Canonical"
+.EXAMPLE
+   Get-ArmVmImage -Location "us" -Publisher "windows"
+.INPUTS
+   
+.OUTPUTS
+   A list of generic objects representing vm images.
+.NOTES
+   All parameters are optional and "wildcarded". This means that location "us" will search for images in all locations containing "us".
+   However, the more narrow the search, the faster the query will run.
+   This function does not query Azure directly, but a separate index of all images. This index is refreshed every 6 hours, which means that 
+   brand new images might not show up in results.
+#>
 Function Get-ArmVmImage
 {
     [CmdletBinding()]
