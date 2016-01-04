@@ -13,6 +13,8 @@ namespace Blue
         public string ip { get; set; }
         public string nodeId { get; set; }
         public string status { get; set; }
+        public string AutomationAccountName { get; set; }
+        public string ResourceGroupName { get; set; }
         public Dictionary<string, string> nodeConfiguration { get; set; }
     }
 }

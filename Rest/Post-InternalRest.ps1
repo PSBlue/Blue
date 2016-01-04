@@ -18,7 +18,7 @@ Function Post-InternalRest
         $ReturnType,
         [Parameter(Mandatory=$true,ParameterSetName='ReturnStronglyTypedObject')]
         $ReturnTypeSingular,
-        [ValidateSet("Post", "Put")]
+        [ValidateSet("Post", "Put", "Patch")]
         [String]$Method="Post"
 	)
 	

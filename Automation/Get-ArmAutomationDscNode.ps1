@@ -1,13 +1,18 @@
 function Get-ArmAutomationDscNode {
     [CmdletBinding(DefaultParameterSetName='List')]
     param (
-        [Parameter(Mandatory, ValueFromPipelineByPropertyName, ParameterSetName='Named')]
+        [Parameter(Mandatory, ParameterSetName='Named')]
         [ValidateNotNullOrEmpty()]
         [string] $Name,
+
+        [Parameter(Mandatory, ParameterSetName='Id')]
+        [ValidateNotNullOrEmpty()]
+        [string] $Id,
 
         [Parameter(Mandatory, ValueFromPipeline)]
         [Blue.AutomationAccount] $AutomationAccount,
 
+        [Parameter(ParameterSetName='List')]
         [Switch] $Raw
     )
     begin {
@@ -35,7 +40,11 @@ function Get-ArmAutomationDscNode {
             foreach ($a in $DscNodes) {
                 if ($MyInvocation.BoundParameters.Keys -contains 'Name' -and $a.Name -ne $Name) {
                     
+                } elseif ($MyInvocation.BoundParameters.Keys -contains 'Id' -and $a.id -ne $Id) {
+                    
                 } else {
+                    $a.ResourceGroupName = $AutomationAccount.ResourceGroupName
+                    $a.AutomationAccountName = $AutomationAccount.Name
                     Write-Output -InputObject $a
                 }
             }
