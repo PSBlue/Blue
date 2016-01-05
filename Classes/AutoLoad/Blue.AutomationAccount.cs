@@ -1,3 +1,6 @@
+using System.Collections;
+using System.Collections.Generic;
+
 namespace Blue
 {
     public class AutomationAccount
@@ -10,5 +13,6 @@ namespace Blue
         public string endpoint { get; set; }
         public string PrimaryKey { get; set; }
         public string SecondaryKey { get; set; }
+        public Dictionary<string, string> Properties { get; set; }
     }
 }
