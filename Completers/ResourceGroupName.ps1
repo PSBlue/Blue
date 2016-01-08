@@ -1,6 +1,8 @@
 $ArgumentCompleter = @{
-        Command = @("Get-ArmResourceGroup")
-        Parameter = "Name"
+        Command = @("Get-ArmResourceGroup",
+            "Get-ArmVirtualMachine"
+        )
+        Parameter = "ResourceGroupName"
         Description = ""
         ScriptBlock = {
         <#

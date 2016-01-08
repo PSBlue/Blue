@@ -6,7 +6,8 @@ Function Get-ArmResourceGroup
         [Blue.ResourceGroup]$InputObject,
         
         [Parameter(Mandatory=$false,ParameterSetName='ByName',Position=0)]
-        [String]$Name,
+        [Alias("Name")]
+        [String]$ResourceGroupName,
         
         [Parameter(Mandatory=$false,ParameterSetName='ByName',Position=1)]
         [String]$Location,
@@ -35,19 +36,19 @@ Function Get-ArmResourceGroup
     {
         if ($InputObject)
         {
-            $Name = $InputObject.Name
+            $ResourceGroupName = $InputObject.ResourceGroupName
         }
         
-        if ($Name)
+        if ($ResourceGroupName)
         {
-            $Uri = "$Baseuri/$Name"
-            #Name is specified, so we assume a single item
+            $Uri = "$Baseuri/$ResourceGroupName"
+            #ResourceGroupName is specified, so we assume a single item
             $ResultResourceGroups = Get-InternalRest -Uri $Uri -ReturnType "Blue.ResourceGroup" -ReturnTypeSingular $true -apiversion "2015-01-01"
         }
         Else
         {
             $Uri = $Baseuri
-            #Name is not specified, so we assume multiple items returned.
+            #ResourceGroupName is not specified, so we assume multiple items returned.
             $ResultResourceGroups = Get-InternalRest -Uri $Uri -ReturnType "Blue.ResourceGroup" -ReturnTypeSingular $false -apiversion "2015-01-01"
         }
         
@@ -72,7 +73,7 @@ Function Get-ArmResourceGroup
         
         if ($ResourceGroups.Count -eq 0)
         {
-            if ($Name)
+            if ($ResourceGroupName)
             {
                 Write-error "Nothing found"
                 return
@@ -92,9 +93,5 @@ Function Get-ArmResourceGroup
     }
 
     
-    
-    
-
-
 	
 }
