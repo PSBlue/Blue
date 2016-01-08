@@ -35,3 +35,16 @@ foreach ($file in $files)
     Write-verbose "Loading type $($File.BaseName)"
     Add-InternalType -TypeName $File.BaseName
 }
+
+#Load tab completers
+if (get-module TabExpansionPlusPlus -list -ErrorAction 0)
+{
+    Write-verbose "Module TabExpansionPlusPlus found, loading argument completer scripts"
+    $CompleterScriptList = Get-ChildItem -Path $PSScriptRoot\Completers\*.ps1
+    foreach ($CompleterScript in $CompleterScriptList) {
+        Write-Verbose -Message ('Import argument completer script: {0}' -f $CompleterScript.FullName)
+        . $CompleterScript.FullName
+    }
+    Write-Verbose -Message 'Finished importing argument completer scripts.'    
+}
+
