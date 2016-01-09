@@ -66,7 +66,7 @@ Function Get-ArmVmImage
             $QueryStrings.add("version", $version)
         }
         
-        $vmimages = Get-InternalRest -uri $Script:ImageSearchApiUrl -querystrings $QueryStrings -apiversion "2015-06-15"
+        $vmimages = Get-InternalRest -uri "$Script:ImageSearchApiUrl/ImageSearch" -querystrings $QueryStrings -apiversion "2015-06-15"
         foreach ($vmimage in $vmimages)
         {
             $vmimage.id = "/Subscriptions/$($script:CurrentSubscriptionId)/Providers/Microsoft.Compute" + $vmimage.id
