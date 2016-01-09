@@ -1,5 +1,8 @@
 $ArgumentCompleter = @{
-        Command = @("Get-ArmResourceGroup")
+        Command = @(
+            "Get-ArmResourceGroup",
+            "Get-ArmVmImage"
+        )
         Parameter = "Location"
         Description = ""
         ScriptBlock = {
