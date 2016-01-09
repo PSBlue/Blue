@@ -13,7 +13,10 @@ Function Get-ArmVirtualMachine
         [String]$ResourceGroupId,
         
         [Parameter(Mandatory=$true,ParameterSetName='ByObj',ValueFromPipeline=$true)]
-        [Blue.VirtualMachine]$InputObject
+        [Blue.VirtualMachine]$InputObject,
+        
+        [ValidateSet("Running","Deallocating")]
+        [String]$PowerState
     )
     Begin
     {
@@ -78,7 +81,23 @@ Function Get-ArmVirtualMachine
     {
         foreach ($vm in $VirtualMachines)
         {
+            
+            $Uri = "https://management.azure.com$($vm.id)/InstanceView"
+            $UriParams = @{}
+            $UriParams.Add("Uri",$Uri)
+            $UriParams.Add("ReturnType","Blue.VMInstanceView")
+            $UriParams.Add("ProviderName","Microsoft.Compute")
+            $ResultInstanceView = Get-InternalRest @UriParams -ReturnTypeSingular $true
+            $Vm.InstanceView = $ResultInstanceView
+            $ResultInstanceView = $null
             $vm.VirtualMachineId = $vm.Id
+            $vm.PowerState = ($vm.InstanceView.statuses | where {$_.Code -match "powerstate"} | select -ExpandProperty code).Split("/")[1]
+            $vm.ProvisioningState = ($vm.InstanceView.statuses | where {$_.Code -match "ProvisioningState"} | select -ExpandProperty code).Split("/")[1]
+        }
+        
+        if ($PowerState)
+        {
+            $Virtualmachines = $Virtualmachines | where {$_.PowerState -eq $PowerState}
         }
         
         if (($VirtualMachines.Count -eq 0) -and ($Name))

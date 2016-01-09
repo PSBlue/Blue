@@ -96,7 +96,56 @@ namespace Blue
         public string Type { get; set; }
         public string Id { get; set; }
         public string VirtualMachineId { get; set; }
+        public string PowerState {get;set;}
+        public string ProvisioningState {get;set;}
+        public VmInstanceView InstanceView {get;set;}
     }
+    
+    
+    public class InstanceViewVmAgentStatus
+    {
+        public string code { get; set; }
+        public string level { get; set; }
+        public string displayStatus { get; set; }
+        public string message { get; set; }
+        public string time { get; set; }
+    }
+
+    public class InstanceViewVmAgent
+    {
+        public string vmAgentVersion { get; set; }
+        public List<InstanceViewVmAgentStatus> statuses { get; set; }
+    }
+
+    public class InstanceViewDiskStatus
+    {
+        public string code { get; set; }
+        public string level { get; set; }
+        public string displayStatus { get; set; }
+        public string time { get; set; }
+    }
+
+    public class InstanceViewDisk
+    {
+        public string name { get; set; }
+        public List<InstanceViewDiskStatus> statuses { get; set; }
+    }
+
+    public class InstanceViewStatuses
+    {
+        public string code { get; set; }
+        public string level { get; set; }
+        public string displayStatus { get; set; }
+        public string time { get; set; }
+    }
+
+    public class VmInstanceView
+    {
+        public InstanceViewVmAgent VmAgent { get; set; }
+        public List<InstanceViewDisk> Disks { get; set; }
+        public List<InstanceViewStatuses> statuses { get; set; }
+    }
+
 
 }
 
