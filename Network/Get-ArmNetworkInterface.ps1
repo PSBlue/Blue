@@ -36,7 +36,7 @@ Function Get-ArmNetworkInterface
         if ($VirtualMachineId)
         {
             $VM = Get-ArmVirtualMachine | where {$_.VirtualMachineId -eq $VirtualMachineId}
-            Write-verbose "Lising NICs for vm $($VM.Name)"
+            Write-verbose "Listing NICs for vm $($VM.Name)"
             $VMNics = $vm.Properties.NetworkProfile.NetworkInterfaces
             foreach ($Nic in $VMNics)
             {

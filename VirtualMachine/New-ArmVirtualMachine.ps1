@@ -130,12 +130,12 @@ Function New-ArmVirtualMachine
                 {
                     
                     $Subnet = $vnet.Properties.Subnets[0].Name
-                    Write-Verbose "Autoselected subnet $subnet since that's the only one in vnet $($vnet.Name)"
+                    Write-Verbose "Autoselected subnet $subnet since that's the only one in selected vnet $($vnet.Name)"
 
                 }
                 Else
                 {
-                    $Nics = $ExistingVMs | Get-ArmNetworkInterface
+                    $Nics = $ExistingVMs | Get-ArmNetworkInterface -verbose:$False
                     Foreach ($Nic in $Nics)
                     {
                         $SubnetId = $nics[0].Properties.IpConfigurations[0].properties.subnet.id
@@ -149,8 +149,9 @@ Function New-ArmVirtualMachine
                     Else
                     {
                         $Subnet = $AllSubnets | select -Unique
+                        $Subnet = Get-ArmSubnet -subnetId $Subnet
                         #TODO: Build a subnet function thingy
-                        Write-Verbose "Autoselected subnet id $Subnet based on existing vms in the same resource group"
+                        Write-Verbose "Autoselected subnet: $($Subnet.Name) based on existing vms in the same resource group"
                     }
                     
                 }

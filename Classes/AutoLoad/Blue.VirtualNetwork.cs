@@ -31,6 +31,7 @@ namespace blue
         public string Id { get; set; }
         public string Etag { get; set; }
         public SubnetProperties Properties { get; set; }
+        public string SubnetId { get; set; }
     }
 
     public class Properties
