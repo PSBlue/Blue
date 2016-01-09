@@ -37,6 +37,7 @@ foreach ($file in $files)
 }
 
 #Load tab completers
+<#
 if (get-module TabExpansionPlusPlus -list -ErrorAction 0)
 {
     Write-verbose "Module TabExpansionPlusPlus found, loading argument completer scripts"
@@ -47,4 +48,5 @@ if (get-module TabExpansionPlusPlus -list -ErrorAction 0)
     }
     Write-Verbose -Message 'Finished importing argument completer scripts.'    
 }
+#>
 

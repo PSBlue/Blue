@@ -69,10 +69,95 @@ Function New-ArmVirtualMachine
             
             
         #Figure out if we need to do some calculations
-        if (!$Vnet -or !$Subnet -or $StorageAccountName)
+        if ((!$Vnet) -or (!$Subnet) -or (!$StorageAccountName))
         {
             #We don't have all the required info
             $ExistingVMs = $ResourceGroup | Get-ArmVirtualMachine
+            if ($ExistingVMs -eq $null)
+            {
+                Write-error "No existing VMs in resource group to read properties from."
+                return
+            }
+            
+            if ((!$vnet) -or (!$Subnet))
+            {
+                #Get the vnet
+                $Vnets = @()
+                Foreach ($VM in $ExistingVMs)
+                {
+                    $Nics = $vm | Get-ArmNetworkInterface -Verbose:$false
+                    foreach ($Nic in $Nics)
+                    {
+                        if ($nic.Properties.IpConfigurations[0].properties.subnet.id)
+                        {
+                            $ThisVnet = Get-ArmVirtualNetwork -SubnetId $nic.Properties.IpConfigurations[0].properties.subnet.id
+                            if ($ThisVnet)
+                            {
+                                $Vnets += $ThisVnet.VirtualNetworkId
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!$vnet)
+            {
+                if (($Vnets | select -Unique).count -gt 1)
+                    {
+                        Write-error "Existing VMs have different virtual networks, so you have to specify the virtual network for the new vm(s)"
+                        return
+                    }
+                    Else
+                    {
+                        $ThisVnet = Get-ArmVirtualNetwork -VirtualNetworkId ($Vnets | select -Unique)
+                        Write-Verbose "Autoselected virtual network $($ThisVnet.Name) based on existing vms in the same resource group"
+                    }
+            }
+            Else
+            {
+                if ($Vnet.GetType().Name -eq "String")
+                {
+                    $vnet = Get-ArmVirtualNetwork -VirtualNetworkId $Vnet
+                }
+            }
+            
+            
+
+            if (!$subnet)
+            {
+                $AllSubnets = @()
+                if ($vnet.Properties.Subnets.count -eq 1)
+                {
+                    
+                    $Subnet = $vnet.Properties.Subnets[0].Name
+                    Write-Verbose "Autoselected subnet $subnet since that's the only one in vnet $($vnet.Name)"
+
+                }
+                Else
+                {
+                    $Nics = $ExistingVMs | Get-ArmNetworkInterface
+                    Foreach ($Nic in $Nics)
+                    {
+                        $SubnetId = $nics[0].Properties.IpConfigurations[0].properties.subnet.id
+                        $AllSubnets += $SubnetId
+                    }
+
+                    if (($AllSubnets | select -Unique).count -gt 1)
+                    {
+                        Write-error "Existing VMs have subnets, and the selected virtual network contains more than one, so you have to specify the subnet for the new vm(s)"
+                    }
+                    Else
+                    {
+                        $Subnet = $AllSubnets | select -Unique
+                        #TODO: Build a subnet function thingy
+                        Write-Verbose "Autoselected subnet id $Subnet based on existing vms in the same resource group"
+                    }
+                    
+                }
+
+
+            }
+            
         }
         
         

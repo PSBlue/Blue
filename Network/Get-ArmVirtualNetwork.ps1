@@ -15,6 +15,9 @@ Function Get-ArmVirtualNetwork
         [Parameter(Mandatory=$True,ParameterSetName='BySubnetId',ValueFromPipelineByPropertyName=$true)]
         [String]$SubnetId,
         
+        [Parameter(Mandatory=$true,ParameterSetName='ByVnetId',ValueFromPipeline=$false)]
+        [String]$VirtualNetworkId,
+        
         [Parameter(Mandatory=$true,ParameterSetName='ByObj',ValueFromPipeline=$true)]
         [Blue.VirtualNetwork]$InputObject
     )
@@ -42,6 +45,10 @@ Function Get-ArmVirtualNetwork
         Elseif ($InputObject)
         {
             $Uri = "https://management.azure.com$($InputObject.Id)/"
+        }
+        Elseif ($VirtualNetworkId)
+        {
+            $Uri = "https://management.azure.com$($VirtualNetworkId)/"
         }
         ElseIf ($SubnetId)
         {
@@ -74,7 +81,7 @@ Function Get-ArmVirtualNetwork
         $UriParams.Add("ReturnType","Blue.VirtualNetwork")
         $UriParams.Add("ProviderName","Microsoft.Network")
         
-        if ($Name -or $SubnetId)
+        if ($Name -or $SubnetId -or $VirtualNetworkId)
         {
             $ResultVnets = Get-InternalRest @UriParams -ReturnTypeSingular $true
         }
