@@ -8,6 +8,7 @@ Get-ChildItem $psscriptroot\Resource\*.ps1 | Foreach-Object { . $_.FullName }
 Get-ChildItem $psscriptroot\VirtualMachine\*.ps1 | Foreach-Object { . $_.FullName }
 Get-ChildItem $psscriptroot\Network\*.ps1 | Foreach-Object { . $_.FullName }
 Get-ChildItem $psscriptroot\Automation\*.ps1 | Foreach-Object { . $_.FullName }
+Get-ChildItem $psscriptroot\Helpers\*.ps1 | Foreach-Object { . $_.FullName }
 
 #Setup internal variables. These will be filled by Connect-ArmSubscription and should not be manipulated directly other functions.
 [string]$script:CurrentSubscriptionId = $null
@@ -30,11 +31,15 @@ $Script:PsDefaultParameterValues.Add("Invoke-WebRequest:Verbose",$False)
 
 #Load autoload classes. Every file in Classes\Autoload needs to be a valid .cs file
 $Files = Get-ChildItem (Join-path $Script:thismodulepath "Classes\AutoLoad")
+Write-verbose "Loading types in folder Classes\AutoLoad"
+add-Type -Path ($Files | select -ExpandProperty FullName)
+
+<#
 foreach ($file in $files)
 {
-    Write-verbose "Loading type $($File.BaseName)"
-    Add-InternalType -TypeName $File.BaseName
+    
 }
+#>
 
 #Load tab completers
 <#

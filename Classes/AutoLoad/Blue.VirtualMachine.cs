@@ -41,13 +41,33 @@ namespace Blue
     {
         public bool DisablePasswordAuthentication { get; set; }
     }
+    
+    public class WindowsConfiguration
+    {
+        public bool provisionVMAgent { get; set; }
+        public bool enableAutomaticUpdates { get; set; }
+    }
 
     public class OsProfile
     {
         public string ComputerName { get; set; }
         public string AdminUsername { get; set; }
+        public string adminPassword { get; set; }
+        public string customData { get; set; }
         public LinuxConfiguration LinuxConfiguration { get; set; }
-        public List<object> Secrets { get; set; }
+        public WindowsConfiguration WindowsConfiguration { get; set; }
+        public List<VmSecret> Secrets { get; set; }
+    }
+
+    public class VmSecret
+    {
+        public SourceVault SourceVault {get;set;}
+        public string VaultCertificate {get;set;}
+    }
+    
+    public class SourceVault
+    {
+        public string id {get;set;}
     }
 
     public class NetworkInterfaceReference
@@ -71,12 +91,12 @@ namespace Blue
         public BootDiagnostics BootDiagnostics { get; set; }
     }
 
-    public class Properties
+    public class VMProperties
     {
         public string VmId { get; set; }
         public HardwareProfile HardwareProfile { get; set; }
         public StorageProfile StorageProfile { get; set; }
-        public OsProfile SsProfile { get; set; }
+        public OsProfile OsProfile { get; set; }
         public NetworkProfile NetworkProfile { get; set; }
         public DiagnosticsProfile DiagnosticsProfile { get; set; }
         public string ProvisioningState { get; set; }
@@ -91,7 +111,7 @@ namespace Blue
     {
         public string Name { get; set; }
         public string Location { get; set; }
-        public Properties Properties { get; set; }
+        public VMProperties Properties { get; set; }
         public List<VmResourceReference> Resources { get; set; }
         public string Type { get; set; }
         public string Id { get; set; }

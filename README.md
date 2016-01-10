@@ -17,7 +17,7 @@
 * Helper functions to make function development as easy as possible (the *armresourcegroup functions will serve as "templates")
 
 ### Somewhat stable features
-* Interacting with Resource Group
+* Interacting with Resource Groups
 * support for credentials with multiple subscriptions
 * Support for refresh tokens
 
