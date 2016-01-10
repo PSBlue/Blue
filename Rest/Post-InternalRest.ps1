@@ -19,7 +19,8 @@ Function Post-InternalRest
         [Parameter(Mandatory=$true,ParameterSetName='ReturnStronglyTypedObject')]
         $ReturnTypeSingular,
         [ValidateSet("Post", "Put", "Patch")]
-        [String]$Method="Post"
+        [String]$Method="Post",
+        [bool]$ReturnFull=$False
 	)
 	
 	$ApiVersions = Get-Content (Join-Path $Script:ThisModulePath "Config\Apiversions.json") -Raw| convertfrom-Json
@@ -127,7 +128,15 @@ Function Post-InternalRest
     {
         Try
         {
-            $Result = Invoke-RestMethod @Params
+            
+            if ($ReturnFull -eq $true)
+            {
+                $Result = Invoke-WebRequest @Params
+            }
+            Else
+            {
+                $Result = Invoke-RestMethod @Params
+            }
         }
         Catch
         {}

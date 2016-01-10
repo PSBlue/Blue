@@ -15,7 +15,7 @@ Function Get-ArmVirtualMachine
         [Parameter(Mandatory=$true,ParameterSetName='ByObj',ValueFromPipeline=$true)]
         [Blue.VirtualMachine]$InputObject,
         
-        [ValidateSet("Running","Deallocating")]
+        [ValidateSet("Running","Deallocating","Deallocated","Starting")]
         [String]$PowerState
     )
     Begin
