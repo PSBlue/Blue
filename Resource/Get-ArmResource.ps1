@@ -47,6 +47,10 @@ Function Get-ArmResource
     }
     End
     {
+        foreach ($Resource in $Resources)
+        {
+            $Resource.ResourceId = $Resource.Id
+        }
         if ($Resources.Count -eq 0)
         {
             if ($ResourceGroupName)

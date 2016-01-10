@@ -9,6 +9,12 @@ Function Get-ArmResourceGroup
         [Alias("Name")]
         [String]$ResourceGroupName,
         
+        [Parameter(Mandatory=$true,ParameterSetName='ByResourceId',Position=0)]
+        [String]$ResourceId,
+        
+        [Parameter(Mandatory=$true,ParameterSetName='ByResourceObj',ValueFromPipeline=$true)]
+        [Blue.Resource]$Resource,
+        
         [Parameter(Mandatory=$false,ParameterSetName='ByName',Position=1)]
         [String]$Location,
         
@@ -37,6 +43,24 @@ Function Get-ArmResourceGroup
         if ($InputObject)
         {
             $ResourceGroupName = $InputObject.ResourceGroupName
+        }
+        
+        if ($Resource)
+        {
+            $ResourceId = $Resource.ResourceId
+        }
+        
+        if ($ResourceId)
+        {
+            #Calculate resource group from resourceid
+            if ($ResourceId.StartsWith("/"))
+            {
+                $ResourceId = $ResourceId.Remove(0,1).ToLower()
+                $ResourceIdAr = $ResourceId.Split("/")
+                $RgIndex = [array]::indexof($ResourceIdAr,"resourcegroups")
+                $rgindex ++
+                $ResourceGroupName = $ResourceIdAr[$rgindex]
+            }
         }
         
         if ($ResourceGroupName)
