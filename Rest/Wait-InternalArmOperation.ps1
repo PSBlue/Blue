@@ -1,7 +1,7 @@
 Function Wait-InternalArmOperation
 {
     Param (
-        $Uri,
+        [String[]]$Uri,
         $InProgressStatus=202,
         $FinishedStatus=200,
         $ApiVersion
@@ -15,22 +15,37 @@ Function Wait-InternalArmOperation
         $nowtime = Get-Date
         $ElapsedTime = $nowtime - $OperationStart
         Write-Verbose "Waiting for arm operation (elapsed seconds: $($ElapsedTime.Totalseconds))"
-        $OperationResult = Get-InternalRest -Uri $Uri -ReturnFull $true -ApiVersion $ApiVersion
-        if ($OperationResult.StatusCode -eq $FinishedStatus)
+        $AllCompleted = $true
+        $UriCounter = 0
+        Foreach ($ThisUri in $Uri)
         {
-            #Arm Operation done
+            $UriCounter ++
+            Write-verbose "Waiting for operation $UriCounter of $($uri.count)"
+            $OperationResult = Get-InternalRest -Uri $ThisUri -ReturnFull $true -ApiVersion $ApiVersion
+            if ($OperationResult.StatusCode -eq $FinishedStatus)
+            {
+                #Arm Operation done, remove self from array
+                $Uri = $uri | where {$_ -ne $thisuri}
+                Write-verbose "Operation $UriCounter done. Waiting for $($Uri.Count) more operations"
+                
+            }
+            ElseIf ($OperationResult.StatusCode -eq $InProgressStatus)
+            {
+                #Arm operation Still in progress
+                $AllCompleted = $false
+            }
+            Else
+            {
+                #No idea whats going on
+            }
+             
+        }
+        if ($AllCompleted -eq $true)
+        {
             $OperationIsFinished = $true
         }
-        ElseIf ($OperationResult.StatusCode -eq $InProgressStatus)
-        {
-            #Arm operation Still in progress
-        }
-        Else
-        {
-            #No idea whats going on
-        }
         
-        #Start sleeping after a while
+        #Start sleeping after a while with a bit of easing back
         if ($counter -gt 5 -and $counter -lt  10)
         {
             Start-Sleep -Milliseconds 500
@@ -43,7 +58,8 @@ Function Wait-InternalArmOperation
         {
             Start-Sleep -Seconds 5
         }
-        $counter ++
+        $counter ++   
+        
     }
     Until (($OperationIsFinished -eq $true) -or ($Counter -gt 999))
 }
