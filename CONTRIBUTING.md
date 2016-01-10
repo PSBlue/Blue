@@ -8,7 +8,9 @@ Blue only supports Azure Resource Manager, and there's no plan to introduce supp
 Blue consists of a common set of functions for authentication and keeping track of the current subscription.
 There is also a common model for interacting with ARM's rest api, which should generally be used. This model allows each function to
 simply specify the url to call, the method to use (get/put/post/delete) and optionally the expected type or array of types to return.
-Use the *-ArmResourceGroup functions to get aquainted with how these work
+Use the *-ArmResourceGroup functions to get aquainted with how these work.
+
+There's also a builtin function for waiting for long-running arm operations. Refer to the function `Stop-ArmVirtualMachine` to get an example of how that works.
 
 ### Function naming
 For functions that are being exported use <Verb>-Arm<Name>, for example Get-ArmResourceGroup
