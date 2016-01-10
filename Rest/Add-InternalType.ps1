@@ -70,7 +70,21 @@ Function Add-InternalType
         Else
         {
             #Load Things
-            Add-type -Path $FileRefs
+            Try 
+            {
+                Add-type -Path $FileRefs
+            }
+            Catch
+            {
+
+                if ($_.FullyQualifiedErrorId -match "TYPE_ALREADY_EXISTS")
+                {}
+                else
+                {
+                    throw $_.FullyQualifiedErrorId
+                }
+            }
+            
         }
 
 
