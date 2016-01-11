@@ -16,10 +16,10 @@ Author = 'Trond Hindenes and others'
 CompanyName = ''
 
 # Copyright statement for this module
-Copyright = ''
+Copyright = 'See license at https://github.com/PSBlue/Blue/blob/devel/LICENSE.md'
 
 # Description of the functionality provided by this module
-Description = 'An community-driven alternative to the official Powershell module for Azure Resource Manager'
+Description = 'A community-driven alternative to the official Powershell module for Azure Resource Manager'
 
 # Minimum version of the Windows PowerShell engine required by this module
 # PowerShellVersion = ''
@@ -86,10 +86,10 @@ PrivateData = @{
 		Tags = @('Azure', 'MicrosoftAzure', 'ARM', 'AzureResourceManager')
 
 		# A URL to the license for this module.
-        LicenseUri = 'https://github.com/trondhindenes/Blue/blob/devel/LICENSE.md'
+        LicenseUri = 'https://github.com/PSBlue/Blue/blob/devel/LICENSE.md'
 
         # A URL to the main website for this project.
-		ProjectUri = 'https://github.com/trondhindenes/Blue'
+		ProjectUri = 'https://github.com/PSBlue/Blue'
 
 		# A URL to an icon representing this module.
         # IconUri = ''

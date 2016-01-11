@@ -20,7 +20,7 @@ on_finish:
             GUID = '47454906-b8f5-47fa-9664-b26456647d69'
             Author = 'Trond Hindenes and others'
             CompanyName = ''
-            Copyright = ''
+            Copyright = 'See license at https://github.com/PSBlue/Blue/blob/devel/LICENSE.md'
             Description = 'A community-driven alternative to the official Powershell module for Azure Resource Manager'
             DotNetFrameworkVersion = '4.5'
             RequiredAssemblies = @('bin\Microsoft.IdentityModel.Clients.ActiveDirectory.dll','bin\Newtonsoft.Json.dll')
@@ -30,8 +30,8 @@ on_finish:
             AliasesToExport = '*'
             PrivateData = @{
                 Tags = @('Azure', 'MicrosoftAzure', 'ARM', 'AzureResourceManager')
-                LicenseUri = 'https://github.com/trondhindenes/Blue/blob/devel/LICENSE.md'
-                ProjectUri = 'https://github.com/trondhindenes/Blue'
+                LicenseUri = 'https://github.com/PSBLUE/Blue/blob/devel/LICENSE.md'
+                ProjectUri = 'https://github.com/PSBLUE/Blue'
             }
         }
         if (test-path '.\Blue.psd1'){remove-item '.\blue.psd1' -confirm:$false}
