@@ -1,3 +1,4 @@
+os: unstable
 install:
   - cmd: "cinst pester"
 
