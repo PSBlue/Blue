@@ -303,6 +303,21 @@ Function New-ArmVirtualMachine
                 }
                 $VMCreateVMName = $RealNameArray -join ""
                 Write-Verbose "Generating VM $VMCreateVMName"
+                $VmCreateParams = @{
+                    "VMName"=$VMCreateVMName;
+                    "ResourceGroup"=$ResourceGroup;
+                    "Location"=$Location;
+                    #TODO: VMSIZE
+                    "VMSize"=$VMSize;
+                    "VMImage"=$SelectedVmImage;
+                    "StorageAccount"=$StorageAccount;
+                    "StorageAccountContainer"=$StorageAccountContainer;
+                    #TODO: AdminCreds
+                    "AdminUserName":$AdminUserName;
+                    "AdminPassword":$AdminPassword;
+                }
+                
+                $CreateVMResult = Create-InternalArmVM @VmCreateParams
             }
             $VMCreateCounter ++
         }
