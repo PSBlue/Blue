@@ -310,11 +310,12 @@ Function New-ArmVirtualMachine
                     #TODO: VMSIZE
                     "VMSize"=$VMSize;
                     "VMImage"=$SelectedVmImage;
+                    "OsType"=$Ostype
                     "StorageAccount"=$StorageAccount;
                     "StorageAccountContainer"=$StorageAccountContainer;
                     #TODO: AdminCreds
-                    "AdminUserName":$AdminUserName;
-                    "AdminPassword":$AdminPassword;
+                    "AdminUserName"=$AdminUserName;
+                    "AdminPassword"=$AdminPassword;
                 }
                 
                 $CreateVMResult = Create-InternalArmVM @VmCreateParams
