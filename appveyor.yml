@@ -1,5 +1,5 @@
 install:
-  - cmd: "cinst pester -version 3.3.14"
+  - cmd: "cinst pester"
 
 build: false
 
@@ -7,6 +7,48 @@ test_script:
   - ps: $res = Invoke-Pester -ExcludeTag "Interactive" -Path . -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru
   - ps: (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestsResults.xml))
   - ps: if ($res.FailedCount -gt 0) { throw "$($res.FailedCount) tests failed."}
+on_finish:
+    - ps: |
+        $stagingDirectory = (Resolve-Path ..).Path
+        $zipFile = Join-Path $stagingDirectory "$(Split-Path $pwd -Leaf).zip"
+        Add-Type -assemblyname System.IO.Compression.FileSystem
+        [System.IO.Compression.ZipFile]::CreateFromDirectory($pwd, $zipFile)
+        @(
+            # You can add other artifacts here
+            (ls $zipFile)
+        ) | % { Push-AppveyorArtifact $_.FullName }
+        # Build new module manifest
+        $Params = @{
+            ModuleVersion = $Env:APPVEYOR_BUILD_VERSION
+            GUID = '47454906-b8f5-47fa-9664-b26456647d69'
+            Author = 'Trond Hindenes and others'
+            CompanyName = ''
+            Copyright = ''
+            Description = 'A community-driven alternative to the official Powershell module for Azure Resource Manager'
+            DotNetFrameworkVersion = '4.5'
+            RequiredAssemblies = @('bin\Microsoft.IdentityModel.Clients.ActiveDirectory.dll','bin\Newtonsoft.Json.dll')
+            FunctionsToExport = "*-arm*"
+            CmdletsToExport = @()
+            VariablesToExport = @()
+            AliasesToExport = '*'
+            PrivateData = @{
+                Tags = @('Azure', 'MicrosoftAzure', 'ARM', 'AzureResourceManager')
+                LicenseUri = 'https://github.com/trondhindenes/Blue/blob/devel/LICENSE.md'
+                ProjectUri = 'https://github.com/trondhindenes/Blue'
+            }
+        }
+        if (test-path '.\Blue.psd1'){remove-item '.\blue.psd1' -confirm:$false}
+        New-ModuleManifest -Path '.\Blue.psd1' @Params      
+
+        if(Get-Command -Name Get-PackageProvider -ErrorAction SilentlyContinue)
+        {
+            Get-PackageProvider -Name NuGet -ForceBootstrap
+            Publish-Module -Name Blue -NuGetApiKey $Env:PSGKey
+        }
+        else
+        {
+            'PSGallery not supported'
+        }
   
 environment:
   logonaccountuserpassword:
@@ -17,3 +59,5 @@ environment:
     secure: GuntNH4gaM2nKUi7xwa1LKe9stjVIOnIm15fR9nMOa093cwbzkBPcWdvLx9fps2n
   tenantid:
     secure: myVKH3dwNJph8o3HsfsDIAu4BBxHfZQhpLGmgIageW6pD1WJ4HqAoDQNxWUY++he
+  PSGKey:
+    secure: 6cSFW/326MjYVbFn+XZJuDSHq0zxKaP1K98fj4+kEAwgvcErw0YvTMKChIUGXFKu
