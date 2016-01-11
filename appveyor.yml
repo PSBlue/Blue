@@ -28,11 +28,9 @@ on_finish:
             CmdletsToExport = @()
             VariablesToExport = @()
             AliasesToExport = '*'
-            PrivateData = @{
-                Tags = @('Azure', 'MicrosoftAzure', 'ARM', 'AzureResourceManager')
-                LicenseUri = 'https://github.com/PSBLUE/Blue/blob/devel/LICENSE.md'
-                ProjectUri = 'https://github.com/PSBLUE/Blue'
-            }
+            Tags = @('Azure', 'MicrosoftAzure', 'ARM', 'AzureResourceManager', 'PSBlue')
+            LicenseUri = 'https://github.com/PSBLUE/Blue/blob/devel/LICENSE.md'
+            ProjectUri = 'https://github.com/PSBLUE/Blue'
         }
         if (test-path '.\Blue.psd1'){remove-item '.\blue.psd1' -confirm:$false}
         New-ModuleManifest -Path '.\Blue.psd1' @Params      
