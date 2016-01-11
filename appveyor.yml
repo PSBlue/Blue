@@ -11,6 +11,8 @@ test_script:
 on_finish:
     - ps: |
         $CurrDir = (Resolve-Path .).Path
+        $ModuleFolder = $env:PSModulePath.split(";")[0]
+        new-item -Path (Join-Path $modulefolder "Blue") -Force -ErrorAction SilentlyContinue -ItemType Directory
         # Build new module manifest
         $Params = @{
             ModuleVersion = $Env:APPVEYOR_BUILD_VERSION
@@ -33,7 +35,8 @@ on_finish:
         }
         if (test-path '.\Blue.psd1'){remove-item '.\blue.psd1' -confirm:$false}
         New-ModuleManifest -Path '.\Blue.psd1' @Params      
-        Import-Module .\blue.psd1 -force
+        copy-item $CurrDir -Destination (Join-Path $modulefolder "Blue") -Recurse -Force
+        import-module blue -Force -ErrorAction Stop
         if(Get-Command -Name Get-PackageProvider -ErrorAction SilentlyContinue)
         {
             Get-PackageProvider -Name NuGet -ForceBootstrap
