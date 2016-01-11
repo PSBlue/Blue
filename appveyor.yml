@@ -12,7 +12,7 @@ on_finish:
     - ps: |
         $CurrDir = (Resolve-Path .).Path
         $ModuleFolder = $env:PSModulePath.split(";")[0]
-        new-item -Path (Join-Path $modulefolder "Blue") -Force -ErrorAction SilentlyContinue -ItemType Directory
+        new-item -Path (Join-Path $modulefolder "Blue") -Force -ErrorAction Stop -ItemType Directory
         # Build new module manifest
         $Params = @{
             ModuleVersion = $Env:APPVEYOR_BUILD_VERSION
@@ -35,7 +35,7 @@ on_finish:
         }
         if (test-path '.\Blue.psd1'){remove-item '.\blue.psd1' -confirm:$false}
         New-ModuleManifest -Path '.\Blue.psd1' @Params      
-        copy-item $CurrDir -Destination (Join-Path $modulefolder "Blue") -Recurse -Force -ErrorAction Stop
+        copy-item (ls $CurrDir) -Destination (Join-Path $modulefolder "Blue") -Recurse -Force -ErrorAction Stop
         import-module (Join-Path $modulefolder "Blue\blue.psd1") -Force -ErrorAction Stop
         if(Get-Command -Name Get-PackageProvider -ErrorAction SilentlyContinue)
         {
