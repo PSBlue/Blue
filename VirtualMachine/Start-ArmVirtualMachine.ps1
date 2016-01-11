@@ -45,7 +45,7 @@ Function Start-ArmVirtualMachine
         Else
         {
             #Poll the operationuri to wait for the thing to complete
-            Wait-InternalArmOperation -Uri $StopOperationUrls -apiversion $apiversion
+            Wait-InternalArmOperation -Uri $StartOperationUrls -apiversion $apiversion
         }
     }
 }
