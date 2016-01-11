@@ -15,6 +15,7 @@ on_finish:
         new-item -Path (Join-Path $modulefolder "Blue") -Force -ErrorAction Stop -ItemType Directory
         # Build new module manifest
         $Params = @{
+            RootModule = 'Blue.psm1'
             ModuleVersion = $Env:APPVEYOR_BUILD_VERSION
             GUID = '47454906-b8f5-47fa-9664-b26456647d69'
             Author = 'Trond Hindenes and others'
