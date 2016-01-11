@@ -35,8 +35,8 @@ on_finish:
         }
         if (test-path '.\Blue.psd1'){remove-item '.\blue.psd1' -confirm:$false}
         New-ModuleManifest -Path '.\Blue.psd1' @Params      
-        copy-item $CurrDir -Destination (Join-Path $modulefolder "Blue") -Recurse -Force
-        import-module blue -Force -ErrorAction Stop
+        copy-item $CurrDir -Destination (Join-Path $modulefolder "Blue") -Recurse -Force -ErrorAction Stop
+        import-module (Join-Path $modulefolder "Blue\blue.psd1") -Force -ErrorAction Stop
         if(Get-Command -Name Get-PackageProvider -ErrorAction SilentlyContinue)
         {
             Get-PackageProvider -Name NuGet -ForceBootstrap
