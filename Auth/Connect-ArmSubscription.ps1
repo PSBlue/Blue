@@ -34,7 +34,7 @@ Function Connect-ArmSubscription
 		}
         Else
         {
-            $Params.Add("PromptBehavior","Auto")
+            $Params.Add("PromptBehavior","Suppress")
         }
 
         $Params.Add("LoginUrl",$Script:LoginUrl)
