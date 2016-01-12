@@ -1,3 +1,22 @@
+<#
+.Synopsis
+   Gets one or multiple Resource Groups
+.DESCRIPTION
+   Gets one or multiple Resource Groups
+.EXAMPLE
+   Get-ArmResourceGroup
+.EXAMPLE
+   Get-ArmResourceGroup -Name "MyRG"
+.EXAMPLE
+   Get-ArmResourceGroup -Location "WestEurope"
+.INPUTS
+   Blue.ResourceGroup
+   Blue.Resource
+.OUTPUTS
+   Blue.ResourceGroup
+.NOTES
+   The output from this function can be piped to lots of the other get functions to list objects contained in a certain Resource Group
+#>
 Function Get-ArmResourceGroup
 {
     [CmdletBinding(DefaultParameterSetName='ByName')]
@@ -5,16 +24,20 @@ Function Get-ArmResourceGroup
         [Parameter(Mandatory=$true,ParameterSetName='ByObj',ValueFromPipeline=$true)]
         [Blue.ResourceGroup]$InputObject,
         
+        # Name of the resource group
         [Parameter(Mandatory=$false,ParameterSetName='ByName',Position=0)]
         [Alias("Name")]
         [String]$ResourceGroupName,
         
+        # Id of the resource (gets the resource group the resource is in)
         [Parameter(Mandatory=$true,ParameterSetName='ByResourceId',Position=0)]
         [String]$ResourceId,
         
+        # Resource (gets the resource group the resource is in)
         [Parameter(Mandatory=$true,ParameterSetName='ByResourceObj',ValueFromPipeline=$true)]
         [Blue.Resource]$Resource,
         
+        # One of the valid locations of the current subscription (for example "westeurope")
         [Parameter(Mandatory=$false,ParameterSetName='ByName',Position=1)]
         [String]$Location,
         

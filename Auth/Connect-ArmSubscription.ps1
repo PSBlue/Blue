@@ -160,7 +160,7 @@ Function Connect-ArmSubscription
         {
         
             Write-verbose "Listing Subscriptions in tenant $($Tenant.tenantId)"
-            $params["PromptBehavior"] = "Auto"
+            $params["PromptBehavior"] = "Suppress"
             $Params["LoginUrl"] = "https://login.windows.net/$($Tenant.tenantId)/oauth2/authorize/"
             $TenantauthResult = Get-InternalAcquireToken @Params
         
