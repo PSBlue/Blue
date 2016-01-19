@@ -112,6 +112,10 @@ Function Get-ArmVirtualMachine
         if ($PostFilterName -eq $true)
         {
             #Name was specified without RG, do client-side filter before returning the thing.
+            if ($VirtualMachines.count -gt 20)
+            {
+                Write-verbose "In order to speed up execution, it is recommended that you also specify the resource group when getting a specific vm in a subscription with many vms. Your current parameters forced us to search all $($VirtualMachines.count) vms in the current subscription."
+            }
             $VirtualMachines = $VirtualMachines | where {$_.Name -eq $Name}
         }
         
