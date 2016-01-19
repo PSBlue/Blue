@@ -24,9 +24,11 @@
 
 ### Features in progress
 * Azure Automation functions (@bgelens)
-* IaaS functions (@trondhindenes)
+* IaaS functions (compute/network) (@trondhindenes)
+* Super-efficient VM image repository search using a separate image index
 
 ### Features planned
+* Storage Accounts
 
 
 
