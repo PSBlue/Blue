@@ -18,7 +18,7 @@ Get-ChildItem $psscriptroot\Helpers\*.ps1 | Foreach-Object { . $_.FullName }
 $Script:AllSubscriptions = @()
 
 #Pre-Canned variables
-$Script:LoginUrl = "https://login.windows.net/common/oauth2/authorize"
+$Script:LoginUrl = "https://login.microsoftonline.com/common/oauth2/authorize"
 $Script:ResourceUrl = "https://management.core.windows.net/"
 $Script:DefaultAuthRedirectUri = "urn:ietf:wg:oauth:2.0:oob"
 $Script:DefaultClientId = "1950a258-227b-4e31-a9cf-717495945fc2"

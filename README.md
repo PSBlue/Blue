@@ -6,6 +6,7 @@
 * [License](LICENSE.md)
 * [Contribution Guidelines](CONTRIBUTING.md)
 * [Running unit tests](UNITTESTS.md)
+* [Install from the PS Gallery](https://www.powershellgallery.com/packages/Blue/)
 
 ### Design goals for the module:
 * Better abstraction from Azure's APIs (i.e. more PowerShell-y)
@@ -23,9 +24,11 @@
 
 ### Features in progress
 * Azure Automation functions (@bgelens)
-* IaaS functions (@trondhindenes)
+* IaaS functions (compute/network) (@trondhindenes)
+* Super-efficient VM image repository search using a separate image index
 
 ### Features planned
+* Storage Accounts
 
 
 

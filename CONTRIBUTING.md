@@ -17,7 +17,7 @@ For functions that are being exported use <Verb>-Arm<Name>, for example Get-ArmR
 For internal(helper) functions, use <Verb>-Internal<Name> 
 
 ### Stuff to remember
-* Focus on pipeline-ability
+* Heavy focus on pipeline-ability
 * Focus on use case, not the api structure. For example, `Get-ArmResourceGroup -name "MyRg" | Get-ArmVm` should be a perfectly
 acceptable way of listing VMs in a resource group
 * Fail correctly: A function should generally not cause terminating errors, 
@@ -26,7 +26,7 @@ and a function should fail and return instead of failing and continuing. In gene
 
 ### Adding new functionality
 In general, follow these steps to add new functionality
-* Add the required classes to "\Classes". Classes in the "Autoload" subfolder will be loaded on module load
+* Add the required classes to "\Classes". Classes in the "Autoload" subfolder will be loaded on module load (you can reference classes across files)
 * Add the required functions, one function per file
 * Add the required folder to the main psm1 file so that functions are dot-sourced at module load
 * Add any necessary unit tests

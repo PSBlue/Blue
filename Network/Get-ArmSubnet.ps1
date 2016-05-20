@@ -8,7 +8,7 @@ Function Get-ArmSubnet
         [Parameter(Mandatory=$True,ParameterSetName='ByNameAndVirtualNetworkObject',ValueFromPipeline=$True)]
         [Blue.VirtualNetwork]$VirtualNetwork,
         
-        [Parameter(Mandatory=$True,ParameterSetName='BySubnetId',ValueFromPipeline=$True)]
+        [Parameter(Mandatory=$True,ParameterSetName='BySubnetId',ValueFromPipelineByPropertyName=$true)]
         [String]$SubnetId
     )
     
@@ -27,7 +27,8 @@ Function Get-ArmSubnet
     {
         if ($VirtualNetwork)
         {
-            $uri = "https://management.azure.com$($vnet.VirtualNetworkId)/subnets"
+            $uri = "https://management.azure.com$($VirtualNetwork.VirtualNetworkId)/subnets"
+            Write-verbose "Listing subnets in Virtual Network $($VirtualNetwork.Name)"
         }
         if ($Name)
         {
