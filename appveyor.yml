@@ -7,7 +7,7 @@ install:
 
 environment:
   logonaccountuserpassword:
-    secure: QnkftW2udgTU8p9Z7iC97tILlIR82Fntgg7d0uAKnA4=
+    secure: 53BYDzQQoZumsxd256drnw==
   logonaccountusername:
     secure: 9fhG/BOeoe18Oeeq/wFaY8OjJEujFumo8eqwzxfOBgUPcP5xXeXBNWgD5y/zkMd/
   subscriptionid:
