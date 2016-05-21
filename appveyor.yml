@@ -29,7 +29,8 @@ on_success:
         $ModuleFolder = $env:PSModulePath.split(";")[0]
         new-item -Path (Join-Path $modulefolder "Blue") -Force -ErrorAction Stop -ItemType Directory
         $manifestcontent = Get-Content "blue.psd1"
-        $manifestcontent = $manifestcontent.replace('0.0.1',$Env:APPVEYOR_BUILD_VERSION)      
+        $manifestcontent = $manifestcontent.replace('0.0.1',$Env:APPVEYOR_BUILD_VERSION)
+        $manifestcontent | set-content blue.psd1      
         copy-item (ls $CurrDir) -Destination (Join-Path $modulefolder "Blue") -Recurse -Force -ErrorAction Stop
         import-module (Join-Path $modulefolder "Blue\blue.psd1") -Force -ErrorAction Stop
         import-module "C:\Program Files\WindowsPowerShell\Modules\PackageManagement\PackageManagement.psd1" -ErrorAction Stop
