@@ -3,3 +3,4 @@ LocalVars.config
 .vs/
 *.user
 *.pssproj
+.vscode/
