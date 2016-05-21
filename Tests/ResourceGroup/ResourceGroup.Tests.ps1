@@ -13,7 +13,7 @@ if (Get-item "$ModuleFolder\LocalVars.Config" -ErrorAction SilentlyContinue)
 
 $FailingCred = New-Object System.Management.Automation.PsCredential("nope", ("nope" | convertTo-SecureString -asplainText -Force))
 $SuceedingCred = New-Object System.Management.Automation.PsCredential($env:logonaccountusername, ($env:logonaccountuserpassword | convertTo-SecureString -asplainText -Force))
-$WorkingSubscriptionId = $env:SubscriptionId
+$WorkingSubscriptionId = $env:subscriptionid
 
 #Connect to azure
 $null = Connect-ArmSubscription -credential $SuceedingCred -SubscriptionId $env:subscriptionid
