@@ -2,8 +2,6 @@ Param ($FilePath, [switch]$Force)
 
 $LocalVarsContent = Get-Content $FilePath -Raw
 $LocalVars = $LocalVarsContent | ConvertFrom-Json
-write-output "PS version is: $($PSVersionTable.PSVersion.tostring())"
-Write-Output "OS version is: $(Get-WmiObject win32_operatingsystem | select -ExpandProperty version)"
 
 Foreach ($var in $LocalVars)
 {
