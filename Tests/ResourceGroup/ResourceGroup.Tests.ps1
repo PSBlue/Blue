@@ -3,16 +3,17 @@ $ModuleFolderHere = (Get-Item $Here).FullName.Replace("\Tests","")
 $here = $ModuleFolderHere
 $ModuleFolder = Split-Path $moduleFolderHere -Parent
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
-Import-Module "$ModuleFolder\blue.psd1" -force -Verbose:$false
-Import-Module "$ModuleFolder\blue.psm1" -force -Verbose:$false
+Import-Module "$ModuleFolder\blue.psd1" -force
+#Import-Module "$ModuleFolder\blue.psm1" -force
 
-if (Get-item "LocalVars.Config" -ErrorAction SilentlyContinue)
+if (Get-item "$ModuleFolder\LocalVars.Config" -ErrorAction SilentlyContinue)
 {
-    Tests\ConfigureTestEnvironment.ps1
+    . $ModuleFolder\Tests\ConfigureTestEnvironment.ps1 -FilePath $ModuleFolder\LocalVars.config
 }
 
 $FailingCred = New-Object System.Management.Automation.PsCredential("nope", ("nope" | convertTo-SecureString -asplainText -Force))
 $SuceedingCred = New-Object System.Management.Automation.PsCredential($env:logonaccountusername, ($env:logonaccountuserpassword | convertTo-SecureString -asplainText -Force))
+$WorkingSubscriptionId = $env:SubscriptionId
 
 #Connect to azure
 $null = Connect-ArmSubscription -credential $SuceedingCred -SubscriptionId $env:subscriptionid

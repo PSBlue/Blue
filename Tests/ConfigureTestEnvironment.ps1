@@ -1,6 +1,6 @@
-Param ([switch]$Force)
+Param ($FilePath, [switch]$Force)
 
-$LocalVarsContent = Get-Content "LocalVars.Config" -Raw
+$LocalVarsContent = Get-Content $FilePath -Raw
 $LocalVars = $LocalVarsContent | ConvertFrom-Json
 
 Foreach ($var in $LocalVars)
