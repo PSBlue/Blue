@@ -1,11 +1,26 @@
 os: unstable
 install:
   - cmd: "cinst pester"
+  - ps: Start-bitstransfer 'https://download.microsoft.com/download/C/4/1/C41378D4-7F41-4BBE-9D0D-0E4F98585C61/PackageManagement_x64.msi'
+  - ps: msiexec /i PackageManagement_x64.msi /quiet /qn /norestart; remove-item "PackageManagement_x64.msi"
+
+environment:
+  logonaccountuserpassword:
+    secure: QnkftW2udgTU8p9Z7iC97tILlIR82Fntgg7d0uAKnA4=
+  logonaccountusername:
+    secure: 9fhG/BOeoe18Oeeq/wFaY8OjJEujFumo8eqwzxfOBgUPcP5xXeXBNWgD5y/zkMd/
+  subscriptionid:
+    secure: GuntNH4gaM2nKUi7xwa1LKe9stjVIOnIm15fR9nMOa093cwbzkBPcWdvLx9fps2n
+  tenantid:
+    secure: myVKH3dwNJph8o3HsfsDIAu4BBxHfZQhpLGmgIageW6pD1WJ4HqAoDQNxWUY++he
+  PSGKey:
+    secure: 6cSFW/326MjYVbFn+XZJuDSHq0zxKaP1K98fj4+kEAwgvcErw0YvTMKChIUGXFKu
 
 build: false
 
+before_test:
+  - ps: Tests\envinfo.ps1
 test_script:
-  - ps: . .\Tests\envinfo.ps1
   - ps: $res = Invoke-Pester -ExcludeTag "Interactive" -Path . -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru
   - ps: (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestsResults.xml))
   - ps: if ($res.FailedCount -gt 0) { throw "$($res.FailedCount) tests failed."}
@@ -14,29 +29,8 @@ on_success:
         $CurrDir = (Resolve-Path .).Path
         $ModuleFolder = $env:PSModulePath.split(";")[0]
         new-item -Path (Join-Path $modulefolder "Blue") -Force -ErrorAction Stop -ItemType Directory
-        Import-Module .\Blue.psd1 -force
-        $ExportedFunctions = get-command -Module blue | select -expand name
-        # Build new module manifest
-        $Params = @{
-            RootModule = 'Blue.psm1'
-            ModuleVersion = $Env:APPVEYOR_BUILD_VERSION
-            GUID = '47454906-b8f5-47fa-9664-b26456647d69'
-            Author = 'Trond Hindenes and others'
-            CompanyName = ''
-            Copyright = 'See license at https://github.com/PSBlue/Blue/blob/devel/LICENSE.md'
-            Description = 'A community-driven alternative to the official Powershell module for Azure Resource Manager'
-            DotNetFrameworkVersion = '4.5'
-            RequiredAssemblies = @('bin\Microsoft.IdentityModel.Clients.ActiveDirectory.dll','bin\Newtonsoft.Json.dll')
-            FunctionsToExport = $ExportedFunctions
-            CmdletsToExport = @()
-            VariablesToExport = @()
-            AliasesToExport = '*'
-            Tags = @('Azure', 'MicrosoftAzure', 'ARM', 'AzureResourceManager', 'PSBlue')
-            LicenseUri = 'https://github.com/PSBLUE/Blue/blob/devel/LICENSE.md'
-            ProjectUri = 'https://github.com/PSBLUE/Blue'
-        }
-        if (test-path '.\Blue.psd1'){remove-item '.\blue.psd1' -confirm:$false}
-        New-ModuleManifest -Path '.\Blue.psd1' @Params      
+        $manifestcontent = Get-Content "blue.psd1"
+        $manifestcontent = $manifestcontent.replace('0.0.1',$Env:APPVEYOR_BUILD_VERSION)      
         copy-item (ls $CurrDir) -Destination (Join-Path $modulefolder "Blue") -Recurse -Force -ErrorAction Stop
         import-module (Join-Path $modulefolder "Blue\blue.psd1") -Force -ErrorAction Stop
         if(Get-Command -Name Get-PackageProvider -ErrorAction SilentlyContinue)

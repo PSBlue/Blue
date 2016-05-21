@@ -1,8 +1,9 @@
 write-output "PS version is: $($PSVersionTable.PSVersion.tostring())"
 Write-Output "OS version is: $(Get-WmiObject win32_operatingsystem | select -ExpandProperty version)"
+write-output "Here is: $(get-location | select -ExpandProperty path)"
 
-$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-$ModuleFolderHere = (Get-Item $Here).FullName.Replace("\Tests","")
+$here = get-location | select -ExpandProperty path
+$ModuleFolderHere = get-location | select -ExpandProperty path
 $here = $ModuleFolderHere
 $ModuleFolder = Split-Path $moduleFolderHere -Parent
 

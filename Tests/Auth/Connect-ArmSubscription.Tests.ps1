@@ -1,14 +1,11 @@
-$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-$ModuleFolderHere = (Get-Item $Here).FullName.Replace("\Tests","")
-$here = $ModuleFolderHere
-$ModuleFolder = Split-Path $moduleFolderHere -Parent
-$sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
-Import-Module "$ModuleFolder\blue.psd1" -force
+$ThisFolder = get-location | select -ExpandProperty path
+$TestsFolder = join-path $ThisFolder "Tests"
+Import-Module "blue.psd1" -force
 #Import-Module "$ModuleFolder\blue.psm1" -force
 
-if (Get-item "$ModuleFolder\LocalVars.Config" -ErrorAction SilentlyContinue)
+if (Get-item "$ThisFolder\LocalVars.Config" -ErrorAction SilentlyContinue)
 {
-    . $ModuleFolder\Tests\ConfigureTestEnvironment.ps1 -FilePath $ModuleFolder\LocalVars.config
+    . "$TestsFolder\ConfigureTestEnvironment.ps1" -FilePath "$ThisFolder\LocalVars.config"
 }
 
 $FailingCred = New-Object System.Management.Automation.PsCredential("nope", ("nope" | convertTo-SecureString -asplainText -Force))
@@ -68,6 +65,10 @@ if ($PSVersionTable.PSVersion.Major -eq 5)
 Describe "Connect-ArmSubscription" {
     It "Not throw on failure" {
         {Connect-ArmSubscription -credential $FailingCred -ErrorAction SilentlyContinue -ErrorVariable myErr} | Should not throw
+    }
+
+    It "is able to log on to Azure without specifying subscriptionid" {
+        (Connect-ArmSubscription -credential $SuceedingCred).SubscriptionId | Should Not BeNullOrEmpty
     }
     
     It "is able to log on to Azure" {
