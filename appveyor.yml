@@ -3,6 +3,7 @@ install:
   - cmd: "cinst pester"
   - ps: Invoke-webrequest -UseBasicParsing -Uri 'https://download.microsoft.com/download/C/4/1/C41378D4-7F41-4BBE-9D0D-0E4F98585C61/PackageManagement_x64.msi' -outfile 'PackageManagement_x64.msi'
   - ps: msiexec /i PackageManagement_x64.msi /quiet /qn /norestart; remove-item "PackageManagement_x64.msi"
+  - ps: $env:logonaccountusername
 
 environment:
   logonaccountuserpassword:
