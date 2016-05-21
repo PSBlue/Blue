@@ -38,6 +38,14 @@ Function New-ArmVirtualMachine
         
         [Parameter(Mandatory=$False,ValueFromPipeline=$false)]
         $StorageAccountName,
+
+        [String]$StorageAccountContainer = "vhds",
+        
+        [String]$VmImage,
+        
+        [String]$OsType,
+        
+        
         
         # Is Async is specified, the shell returns immediately, not waiting for the VM to be created. 
         [Switch]$Async
@@ -158,10 +166,169 @@ Function New-ArmVirtualMachine
 
 
             }
+
+            if (!$StorageAccount)
+            {
+                $AllOsDiskVhdUris = @()
+                foreach ($ExistingVM in $ExistingVMs)
+                {
+                    #Grab the osdisk uri
+                    [System.UriBuilder]$VhdUri = $ExistingVM.Properties.StorageProfile.OsDisk.Vhd.uri
+                    $VhdStorageAccount = $vhduri.host
+                    $AllOsDiskVhdUris += $VhdStorageAccount
+                }
+
+                if (($AllOsDiskVhdUris | select -Unique).count -eq 1)
+                {
+                    $StorageAccount = $AllOsDiskVhdUris | select -Unique
+                    Write-Verbose "Autoselected storage account: $StorageAccount based on existing vms in the same resource group"
+                }
+            }
             
+            if (!$Vmimage)
+            {
+                $AllImages = @()
+                foreach ($ExistingVM in $ExistingVMs)
+                {
+                    #Grab the osdisk uri
+                    $ImageRef = $ExistingVM.Properties.StorageProfile.ImageReference
+                    $ImageRefString = "/$($ImageRef.Publisher)/$($ImageRef.Offer)/$($ImageRef.Sku)/$($ImageRef.Version)"
+                    $AllImages += $ImageRefString
+                }
+                if (($AllImages | select -Unique).count -eq 1)
+                {
+                    $VMImage = $AllImages | select -Unique
+                    Write-Verbose "Autoselected vm image: $VMImage based on existing vms in the same resource group"
+                }
+                Else
+                {
+                    Write-error "Unable to auto-select VMImage, plase specify th VMImage parameter"
+                }
+                
+            }
         }
         
         
+        if ($VmImage.Gettype().Name -eq "String")
+        {
+            if ($vmimage.StartsWith("/"))
+            {
+                #Get rid of the first slash
+                $vmimage = $vmimage.remove(0,1)
+            }
+            $VmImageParts = $VMImage.split("/")
+            $Publisher = $VmImageParts[0]
+            $Offer = $VmImageParts[1]
+            $Sku = $VmImageParts[2]
+            $Version = $vmImageParts[3]
+            
+            $ImageSearcharams = @{
+                "Location"=$Location;
+                "Publisher"=$Publisher;
+                "Offer"=$Offer;
+                "Sku"=$Sku
+            }
+            if ($version.ToLower() -eq "latest")
+            {
+                $LatestVersion = $true
+            }
+            Else
+            {
+                $ImageSearcharams.Add("version",$Version)
+            }
+            
+        }
+        
+        if (!$OsType)
+        {
+            Write-verbose "Looking up vm image"
+            $VMImageResultList = Get-ArmVmImage @ImageSearcharams
+            if ($LatestVersion)
+            {
+                Foreach ($ImageResult in $VMImageResultList)
+                {
+                    #Add some strongly sortable version thingys
+                    [System.Version]$ImageVersion = $ImageResult.Version
+                    $imageresult | Add-Member -Name "VersionType" -MemberType NoteProperty -Value $ImageVersion -Force
+                    
+                }
+                $SelectedVmImage = $VMImageResultList | sort VersionType -Descending | select -First 1
+                Write-verbose "Selected latest image version, which is $($SelectedVmImage.Version)"
+            }
+            
+            $OsType = $SelectedVmImage.properties.osDiskImage.operatingSystem
+            Write-Verbose "Selected image has OS type $OsType"    
+        }
+        
+        if (!$InstanceCount)
+        {
+            $InstanceCount = 1
+        }
+        Else
+        {
+            Write-verbose "Generating $InstanceCount VMs"
+        }
+        
+        $VMCreateCounter = 1
+        Do
+        {
+            Write-verbose "Generating vm $VMCreateCounter of $InstanceCount"
+            if ($VmName)
+            {
+                
+            }
+            Else
+            {
+                $NameArray = Invoke-InternalStringToArray -InputString $NamePattern
+                $RealNameArray = @()
+                foreach ($Char in $NameArray)
+                {
+                    if ($Char -eq "#")
+                    {
+                        #Generate random char
+                        $Random = Get-Random -Minimum 65 -Maximum 90
+                        $RandomChar = [char]$Random
+                        $RealNameArray += $RandomChar
+                    }
+                    Elseif ($Char -eq "*")
+                    {
+                        #Generate random number
+                        $Random = get-random -Minimum 1 -Maximum 9
+                        $RealNameArray += $Random.ToString()
+                    }
+                    Else
+                    {
+                        $RealNameArray += $Char
+                    }
+                }
+                $VMCreateVMName = $RealNameArray -join ""
+                Write-Verbose "Generating VM $VMCreateVMName"
+                $VmCreateParams = @{
+                    "VMName"=$VMCreateVMName;
+                    "ResourceGroup"=$ResourceGroup;
+                    "Location"=$Location;
+                    #TODO: VMSIZE
+                    "VMSize"=$VMSize;
+                    "VMImage"=$SelectedVmImage;
+                    "OsType"=$Ostype
+                    "StorageAccount"=$StorageAccount;
+                    "StorageAccountContainer"=$StorageAccountContainer;
+                    #TODO: AdminCreds
+                    "AdminUserName"=$AdminUserName;
+                    "AdminPassword"=$AdminPassword;
+                }
+                
+                $CreateVMResult = Create-InternalArmVM @VmCreateParams
+            }
+            $VMCreateCounter ++
+        }
+        Until ($VMCreateCounter -gt $InstanceCount)
+        
+        
+        
+    }
+    end
+    {
         
     }
 }
