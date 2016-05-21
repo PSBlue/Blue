@@ -35,11 +35,11 @@ Function ParseGuid
 #Tests tagged with "interactive"" cannot be run by CI
 Describe -Tag "Interactive" "Connect-ArmSubscription" {
     It "Output subscription on success" {
-        (Connect-ArmSubscription).SubscriptionId | Should not be $null
+        (Connect-ArmSubscription -ForceShowUi).SubscriptionId | Should not be $null
     }
     
     It "Have a guid-parseable output on success" {
-        {[System.Guid]::Parse((Connect-ArmSubscription).SubscriptionId)} | Should not throw
+        {[System.Guid]::Parse((Connect-ArmSubscription -ForceShowUi).SubscriptionId)} | Should not throw
     }
 }
 
