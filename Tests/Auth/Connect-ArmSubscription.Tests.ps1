@@ -13,6 +13,8 @@ if (Get-item "LocalVars.Config" -ErrorAction SilentlyContinue)
 
 $FailingCred = New-Object System.Management.Automation.PsCredential("nope", ("nope" | convertTo-SecureString -asplainText -Force))
 $SuceedingCred = New-Object System.Management.Automation.PsCredential($env:logonaccountusername, ($env:logonaccountuserpassword | convertTo-SecureString -asplainText -Force))
+$WorkingSubscriptionId = $env:SubscriptionId
+
 
 Function ParseGuid
 {
@@ -69,7 +71,7 @@ Describe "Connect-ArmSubscription" {
     }
     
     It "is able to log on to Azure" {
-        (Connect-ArmSubscription -credential $SuceedingCred).SubscriptionId | Should Not BeNullOrEmpty
+        (Connect-ArmSubscription -credential $SuceedingCred -SubscriptionId $WorkingSubscriptionId).SubscriptionId | Should Not BeNullOrEmpty
     }
     
 
@@ -80,7 +82,7 @@ Describe "Connect-ArmSubscription" {
     }
     
     It "Has a guid-parseable output on success when tenantid is specified" {
-        $Guid = (Connect-ArmSubscription -credential $SuceedingCred -TenantId $env:tenantid).SubscriptionId
+        $Guid = (Connect-ArmSubscription -credential $SuceedingCred -TenantId $env:tenantid -SubscriptionId $WorkingSubscriptionId).SubscriptionId
         $Result = ParseGuid -Guid $guid
         $Result | Should be $env:subscriptionid
     }
@@ -97,12 +99,13 @@ Describe "Connect-ArmSubscription" {
         $Result | Should be $env:subscriptionid
     }
 
+<#
     It "Has a guid-parseable output on success when subscriptionId is not specified" {
         $Guid = (Connect-ArmSubscription -credential $SuceedingCred).SubscriptionId
         $Result = ParseGuid -Guid $guid
         $Result | Should be $env:subscriptionid
     }
-
+#>
 }
  
 Describe "ConfigFile" {
