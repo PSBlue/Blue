@@ -1,6 +1,8 @@
 os: unstable
 install:
   - cmd: "cinst pester"
+  - ps: Invoke-webrequest -UseBasicParsing -Uri 'https://download.microsoft.com/download/C/4/1/C41378D4-7F41-4BBE-9D0D-0E4F98585C61/PackageManagement_x64.msi' -outfile 'PackageManagement_x64.msi'
+  - ps: Start-Process -FilePath msiexec -ArgumentList /i, PackageManagement_x64.msi, /quiet -Wait;remove-item "PackageManagement_x64.msi"
   - ps: $env:logonaccountusername
 
 environment:
@@ -30,6 +32,7 @@ on_success:
         $manifestcontent = $manifestcontent.replace('0.0.1',$Env:APPVEYOR_BUILD_VERSION)      
         copy-item (ls $CurrDir) -Destination (Join-Path $modulefolder "Blue") -Recurse -Force -ErrorAction Stop
         import-module (Join-Path $modulefolder "Blue\blue.psd1") -Force -ErrorAction Stop
+        import-module "C:\Program Files\WindowsPowerShell\Modules\PackageManagement\PackageManagement.psd1" -ErrorAction Stop
         if(Get-Command -Name Get-PackageProvider -ErrorAction SilentlyContinue)
         {
             Get-PackageProvider -Name NuGet -ForceBootstrap
