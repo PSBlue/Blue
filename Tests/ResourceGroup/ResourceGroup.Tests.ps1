@@ -1,6 +1,6 @@
 $ThisFolder = get-location | select -ExpandProperty path
 $TestsFolder = join-path $ThisFolder "Tests"
-Import-Module "blue.psd1"
+Import-Module "$ThisFolder\blue.psd1"
 #Import-Module "$ModuleFolder\blue.psm1" -force
 
 if (Get-item "$ThisFolder\LocalVars.Config" -ErrorAction SilentlyContinue)
