@@ -43,17 +43,3 @@ on_success:
         {
             'PSGallery not supported'
         }
-on_finish:
-- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-  
-environment:
-  logonaccountuserpassword:
-    secure: QnkftW2udgTU8p9Z7iC97tILlIR82Fntgg7d0uAKnA4=
-  logonaccountusername:
-    secure: 9fhG/BOeoe18Oeeq/wFaY8OjJEujFumo8eqwzxfOBgUPcP5xXeXBNWgD5y/zkMd/
-  subscriptionid:
-    secure: GuntNH4gaM2nKUi7xwa1LKe9stjVIOnIm15fR9nMOa093cwbzkBPcWdvLx9fps2n
-  tenantid:
-    secure: myVKH3dwNJph8o3HsfsDIAu4BBxHfZQhpLGmgIageW6pD1WJ4HqAoDQNxWUY++he
-  PSGKey:
-    secure: 6cSFW/326MjYVbFn+XZJuDSHq0zxKaP1K98fj4+kEAwgvcErw0YvTMKChIUGXFKu
