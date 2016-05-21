@@ -206,6 +206,16 @@ Function Connect-ArmSubscription
             {
                 Write-Error "specified subscriptionId $SubscriptionId was not found for tenant" -ErrorAction Stop
             }
+            
+            #requested Subscription id found in the map, add that one
+            $RequestedSub = $TenantAuthMap | where {$_.SubscriptionId -eq $SubscriptionId}
+            $script:AuthToken = $RequestedSub.AccessToken
+            $Script:RefreshToken = $RequestedSub.RefreshToken
+            $script:TokenExpirationUtc = $RequestedSub.Expiry
+            $script:CurrentSubscriptionId = $RequestedSub.SubscriptionId
+            $ThisSubscription =  $RequestedSub
+
+
         }
         ElseIf ($TenantAuthMap.count -eq 1)
         {
