@@ -110,7 +110,7 @@ Function Post-InternalRest
 	
 	if ($Data)
 	{
-		$JsonData = $data | ConvertTo-Json
+		$JsonData = $data | ConvertTo-Json -Depth 20
 	}
 	
 	$Params = @{
