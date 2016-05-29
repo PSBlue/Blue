@@ -1,8 +1,8 @@
 Function Get-ArmVirtualMachine
 {
-    [CmdletBinding(DefaultParameterSetName='ByNothing')]
+    [CmdletBinding()]
     Param (
-        [Parameter(Mandatory=$True,ParameterSetName='ByName',ValueFromPipeline=$false)]
+        [Parameter(Mandatory=$False,ParameterSetName='ByName',ValueFromPipeline=$false)]
         [Parameter(Mandatory=$False,ParameterSetName='ByNameAndResourceGroupId',ValueFromPipeline=$false)]
         [Parameter(Mandatory=$False,ParameterSetName='ByNameAndResourceGroupName',ValueFromPipeline=$false)]
         [String]$Name,
@@ -74,7 +74,7 @@ Function Get-ArmVirtualMachine
         $UriParams.Add("ReturnType","Blue.VirtualMachine")
         $UriParams.Add("ProviderName","Microsoft.Compute")
         
-        if ($Name -and $ResourceGroupName)
+        if ($Name)
         {
             $ResultVirtualMachines = Get-InternalRest @UriParams -ReturnTypeSingular $true
         }
