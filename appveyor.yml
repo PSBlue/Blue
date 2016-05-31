@@ -25,9 +25,14 @@ on_success:
         $CurrDir = (Resolve-Path .).Path
         $ModuleFolder = $env:PSModulePath.split(";")[0]
         new-item -Path (Join-Path $modulefolder "Blue") -Force -ErrorAction Stop -ItemType Directory
+        import-module "blue.psd1"
         $manifestcontent = Get-Content "blue.psd1"
         $manifestcontent = $manifestcontent.replace('0.0.1',$Env:APPVEYOR_BUILD_VERSION)
-        $manifestcontent | set-content blue.psd1      
+        $exportedCommands = get-command -Module blue | select -ExpandProperty name
+        $exportedCommands = $exportedCommands -join ","
+        $exportedCommands = '@(' + $exportedCommandsa + ')'
+        $manifestcontent = $manifestcontent.replace('"*-arm*"',$exportedCommands)
+        $manifestcontent | set-content blue.psd1
         copy-item (ls $CurrDir) -Destination (Join-Path $modulefolder "Blue") -Recurse -Force -ErrorAction Stop
         import-module (Join-Path $modulefolder "Blue\blue.psd1") -Force -ErrorAction Stop
         import-module "PackageManagement" -ErrorAction Stop
