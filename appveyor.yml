@@ -24,13 +24,17 @@ on_success:
     - ps: |
         $CurrDir = (Resolve-Path .).Path
         $ModuleFolder = $env:PSModulePath.split(";")[0]
+        #Create folder for module
         new-item -Path (Join-Path $modulefolder "Blue") -Force -ErrorAction Stop -ItemType Directory
-        Import-Module .\blue.psd1 -Verbose
+        #import module to get exported functions
+        Import-Module .\blue.psd1 -Verbose -force
         $manifestcontent = Get-Content "blue.psd1"
+        #Set build version
         $manifestcontent = $manifestcontent.replace('0.0.1',$Env:APPVEYOR_BUILD_VERSION)
         $exportedCommands = get-command -Module blue | select -ExpandProperty name
         $exportedCommands = $exportedCommands -join ","
-        $exportedCommands = '@(' + $exportedCommandsa + ')'
+        $exportedCommands = '@(' + $exportedCommands + ')'
+        #set exported functions
         $manifestcontent = $manifestcontent.replace('"*-arm*"',$exportedCommands)
         $manifestcontent | set-content blue.psd1
         remove-module blue
