@@ -21,6 +21,7 @@ function New-ArmTemplateDeployment
         $Mode="Incremental"
 	)
     
+    
     Begin
     {
         $ApiVersion = "2016-02-01"
