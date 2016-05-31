@@ -81,8 +81,11 @@ Function Connect-ArmSubscription
             #Remove the current subscription object from the array
             
             $CurrentSub = $Script:AllSubscriptions | where {$_.SubscriptionId -eq $script:CurrentSubscriptionId}
-            $Script:AllSubscriptions = $Script:AllSubscriptions | where {$_.SubscriptionId -ne $script:CurrentSubscriptionId}
             
+            #Workaround to make sure "allsubscriptions" is an array an not an object, even if it only contains one object
+            $TempAllSubs = @()
+            $TempAllSubs += $Script:AllSubscriptions | where {$_.SubscriptionId -ne $script:CurrentSubscriptionId}
+            $Script:AllSubscriptions = $TempAllSubs
 
             $SubObj = "" | Select SubscriptionId,TenantId,AccessToken,RefreshToken, Expiry, SubscriptionObject, DisplayName, State, LoginUrl
             $subobj.SubscriptionId = $script:CurrentSubscriptionId
@@ -192,7 +195,8 @@ Function Connect-ArmSubscription
         }
     
         #Add all subscriptions to global var
-        $Script:AllSubscriptions = $TenantAuthMap
+        $Script:AllSubscriptions = @()
+        $Script:AllSubscriptions += $TenantAuthMap
 	
         #Figure out which subscription to choose
         if ($TenantAuthMap.count -eq 0)
