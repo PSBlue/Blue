@@ -10,16 +10,17 @@ Function Test-InternalArmConnection
 		
 		#Test that we can reach the current subscription
 		$Uri = "https://management.azure.com/subscriptions/$($script:CurrentSubscriptionId)"
-		Try 
-		{
-			$Result =Get-InternalRest -Uri $Uri -apiversion "2015-01-01"
-			$AuthSuccess = $true
-		}
-		Catch
-		{
-			$AuthSuccess = $false
-		}
+        $Result =Get-InternalRest -Uri $Uri -apiversion "2015-01-01" -ErrorAction SilentlyContinue -ErrorVariable autherror
 		
+        if ($Autherror)
+        {
+            $AuthSuccess = $false
+        }
+        Else
+        {
+            $AuthSuccess = $true
+        }
+        
 		
         if ($AuthSuccess -eq $false)
         {

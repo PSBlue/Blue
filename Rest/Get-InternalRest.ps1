@@ -67,9 +67,11 @@ Function Get-InternalRest
 	if ($BearerToken -eq $null)
 	{
 		$BearerToken = $script:AuthToken
-		if (-not (Test-InternalTokenNotExpired -Token $BearerToken)) {
+		<#
+        if (-not (Test-InternalTokenNotExpired -Token $BearerToken)) {
             Write-Error -Message "Authentication token has expired. Run Connect-ArmSubscription to acquire a new one" -ErrorAction Stop
         }
+        #>
 		$TokenExpiry = $script:TokenExpirationUtc
 		
 	}
