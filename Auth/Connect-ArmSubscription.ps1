@@ -241,7 +241,14 @@ Function Connect-ArmSubscription
                 '[{0}] - {1} - {2}' -f $i,$T.DisplayName,$T.SubscriptionId
             }
             do {
-                $result = Read-Host -Prompt "Enter the index number of the desired subscription: `n$($List | Out-String)"
+                $strResult = Read-Host -Prompt "Enter the index number of the desired subscription: `n$($List | Out-String)"
+                try {
+                    [int]$Result = [convert]::ToInt32($strResult, 10)    
+                }
+                catch {
+                    $Result = 0
+                }
+                
             } while ($result -gt $TenantAuthMap.count -or $result -eq 0)
             $script:AuthToken = $TenantAuthMap[$result -1].AccessToken
             $Script:RefreshToken = $TenantAuthMap[$result -1].RefreshToken
