@@ -2,7 +2,7 @@ Function Get-ArmVirtualMachine
 {
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory=$False,ParameterSetName='ByName',ValueFromPipeline=$false)]
+        [Parameter(Mandatory=$False,ParameterSetName='ByName',ValueFromPipeline=$True,Position=0)]
         [Parameter(Mandatory=$False,ParameterSetName='ByNameAndResourceGroupId',ValueFromPipeline=$false)]
         [Parameter(Mandatory=$False,ParameterSetName='ByNameAndResourceGroupName',ValueFromPipeline=$false)]
         [String]$Name,
@@ -39,6 +39,7 @@ Function Get-ArmVirtualMachine
         if ($ResourceGroupName)
         {
             $Uri = "https://management.azure.com/subscriptions/$($script:CurrentSubscriptionId)/resourceGroups/$ResourceGroupName/providers/Microsoft.Compute/virtualMachines/"    
+
         }
         Elseif ($InputObject)
         {
@@ -74,15 +75,26 @@ Function Get-ArmVirtualMachine
         $UriParams.Add("ReturnType","Blue.VirtualMachine")
         $UriParams.Add("ProviderName","Microsoft.Compute")
         
-        if ($Name)
+        if ($Name -and (!$PostFilterName))
         {
             $ResultVirtualMachines = Get-InternalRest @UriParams -ReturnTypeSingular $true
         }
         Else
         {
             $ResultVirtualMachines = Get-InternalRest @UriParams -ReturnTypeSingular $false    
+            $ResultCount = $ResultVirtualMachines.count
+        }
+
+        if ($ResultCount -and ($ResultCount -gt 20))
+        {
+            Write-Warning "In order to speed up execution, it is recommended that you also specify the resource group when getting a specific vm in a subscription with many vms. Your current parameters forced us to search all $($ResultCount) vms in the current subscription."
         }
         
+        if ($Name -and $PostFilterName)
+        {
+            $ResultVirtualMachines = $ResultVirtualMachines | where {$_.Name -like $Name}
+        }
+
         $VirtualMachines += $ResultVirtualMachines
         
     }
@@ -109,15 +121,6 @@ Function Get-ArmVirtualMachine
             $Virtualmachines = $Virtualmachines | where {$_.PowerState -eq $PowerState}
         }
         
-        if ($PostFilterName -eq $true)
-        {
-            #Name was specified without RG, do client-side filter before returning the thing.
-            if ($VirtualMachines.count -gt 20)
-            {
-                Write-verbose "In order to speed up execution, it is recommended that you also specify the resource group when getting a specific vm in a subscription with many vms. Your current parameters forced us to search all $($VirtualMachines.count) vms in the current subscription."
-            }
-            $VirtualMachines = $VirtualMachines | where {$_.Name -eq $Name}
-        }
         
         if (($VirtualMachines.Count -eq 0) -and ($Name))
         {
@@ -134,6 +137,5 @@ Function Get-ArmVirtualMachine
         
         
     }
-    
     
 }
