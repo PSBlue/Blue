@@ -9,7 +9,7 @@ Function Add-InternalType
     $TypeLoaded = $true
     try
     {
-        $TypeText = get-type -Type $TypeName
+        $TypeText = Get-InternalType -Type $TypeName
     }
     catch
     {
