@@ -131,11 +131,11 @@ Function Post-InternalRest
             
             if ($ReturnFull -eq $true)
             {
-                $Result = Invoke-WebRequest @Params
+                $Result = Invoke-WebRequest @Params -UseBasicParsing
             }
             Else
             {
-                $Result = Invoke-RestMethod @Params
+                $Result = Invoke-RestMethod @Params -UseBasicParsing
             }
         }
         Catch
@@ -158,7 +158,7 @@ Function Post-InternalRest
         #Type Loaded. Use webrequest to query, since we'll do our own json parsing
         Try
         {
-            $WebResult = Invoke-WebRequest @Params   
+            $WebResult = Invoke-WebRequest @Params -UseBasicParsing
         }
         Catch
         {
