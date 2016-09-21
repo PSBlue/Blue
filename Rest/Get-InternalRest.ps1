@@ -123,11 +123,11 @@ Function Get-InternalRest
         {
             if ($ReturnFull -eq $true)
             {
-                $Result = Invoke-WebRequest -Method $Method -Uri $Uri -Headers $headers
+                $Result = Invoke-WebRequest -Method $Method -Uri $Uri -Headers $headers -UseBasicParsing
             }
             Else
             {
-                $Result = Invoke-RestMethod -Method $Method -Uri $Uri -Headers $headers
+                $Result = Invoke-RestMethod -Method $Method -Uri $Uri -Headers $headers -UseBasicParsing
             }
             
         }
@@ -151,7 +151,7 @@ Function Get-InternalRest
         #Type Loaded. Use webrequest to query, since we'll do our own json parsing
         Try
         {
-            $WebResult = Invoke-WebRequest -Method $Method -Uri $Uri -Headers $headers    
+            $WebResult = Invoke-WebRequest -Method $Method -Uri $Uri -Headers $headers -UseBasicParsing    
         }
         Catch
         {
