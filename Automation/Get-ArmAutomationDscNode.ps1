@@ -9,7 +9,7 @@ function Get-ArmAutomationDscNode {
         [ValidateNotNullOrEmpty()]
         [string] $Id,
 
-        [Parameter(Mandatory, ValueFromPipeline)]
+        [Parameter(ValueFromPipeline)]
         [Blue.AutomationAccount] $AutomationAccount,
 
         [Parameter(ParameterSetName='List')]
@@ -22,6 +22,16 @@ function Get-ArmAutomationDscNode {
             return
         }
     } process {
+		if ($null -eq $AutomationAccount -and $null -eq $script:AutomationAccount) {
+			Write-Error -Message 'Please pass an automation account object to the AutomationAccount parameter or use Select-ArmAutomationAccount before calling this function.' -ErrorAction Stop
+		}
+		if ($AutomationAccount) {
+			#explicitly defined as param
+			$AA = $AutomationAccount
+		} else {
+			#get from currently selected automation account
+			$AA = $script:AutomationAccount
+		}
         $Params = @{
             Uri = 'https://management.azure.com/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Automation/automationAccounts/{2}/nodes' -f $script:CurrentSubscriptionId, $AutomationAccount.ResourceGroupName, $AutomationAccount.Name
             ProviderName = 'Microsoft.Automation'

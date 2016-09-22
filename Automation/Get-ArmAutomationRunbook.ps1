@@ -10,7 +10,7 @@ function Get-ArmAutomationRunbook {
         [ValidateNotNullOrEmpty()]
         [string] $Id,
 
-        [Parameter(Mandatory, ValueFromPipeline)]
+        [Parameter(ValueFromPipeline)]
         [Blue.AutomationAccount] $AutomationAccount,
 
         [Parameter(ParameterSetName='List')]
@@ -23,8 +23,18 @@ function Get-ArmAutomationRunbook {
             return
         }
     } process {
+		if ($null -eq $AutomationAccount -and $null -eq $script:AutomationAccount) {
+			Write-Error -Message 'Please pass an automation account object to the AutomationAccount parameter or use Select-ArmAutomationAccount before calling this function.' -ErrorAction Stop
+		}
+		if ($AutomationAccount) {
+			#explicitly defined as param
+			$AA = $AutomationAccount
+		} else {
+			#get from currently selected automation account
+			$AA = $script:AutomationAccount
+		}
         $Params = @{
-            Uri = 'https://management.azure.com/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Automation/automationAccounts/{2}/runbooks' -f $script:CurrentSubscriptionId, $AutomationAccount.ResourceGroupName, $AutomationAccount.Name
+            Uri = 'https://management.azure.com/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Automation/automationAccounts/{2}/runbooks' -f $script:CurrentSubscriptionId, $AA.ResourceGroupName, $AA.Name
             ProviderName = 'Microsoft.Automation'
         }
 
@@ -40,12 +50,12 @@ function Get-ArmAutomationRunbook {
         } else {
             foreach ($a in $Runbooks) {
                 if ($MyInvocation.BoundParameters.Keys -contains 'Name' -and $a.Name -ne $Name) {
-                    
+                    Continue
                 } elseif ($MyInvocation.BoundParameters.Keys -contains 'Id' -and $a.id -ne $Id) {
-                    
+                    Continue
                 } else {
-                    $a.ResourceGroupName = $AutomationAccount.ResourceGroupName
-                    $a.AutomationAccountName = $AutomationAccount.Name
+                    $a.ResourceGroupName = $AA.ResourceGroupName
+                    $a.AutomationAccountName = $AA.Name
                     Write-Output -InputObject $a
                 }
             }

@@ -17,6 +17,7 @@ Get-ChildItem $psscriptroot\TemplateDeployment\*.ps1 | Foreach-Object { . $_.Ful
 [string]$script:RefreshToken = $null
 [Nullable[System.DateTimeOffset]]$script:TokenExpirationUtc = $null
 $Script:AllSubscriptions = @()
+$Script:AutomationAccount = $null
 
 #Pre-Canned variables
 $Script:LoginUrl = "https://login.microsoftonline.com/common/oauth2/authorize"
